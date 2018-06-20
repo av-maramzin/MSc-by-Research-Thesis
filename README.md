@@ -1,2 +1,2 @@
-# MSc-by-Research-Thesis
-The University of Edinburgh, School of Informatics, Centre for Doctoral Training in Pervasive Parallelism, MSc by Research. LaTeX thesis.
+# UofE-LaTeX-theses-templates
+Very basic LaTeX templates for typesetting different types of theses at the University of Edinburgh, School of Informatics.
