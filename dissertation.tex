@@ -58,7 +58,8 @@
 
 %% Put any \usepackage commands you want to use right here; the following is 
 %% an example:
-\usepackage{natbib}
+%%\usepackage{natbib}
+\usepackage{cite}
 
 
 \usepackage{float}
@@ -73,6 +74,9 @@
 %\usepackage{mathrsfs}
 \usepackage{mathtools}
 
+\usepackage{url}
+\usepackage{hyperref}
+
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 
@@ -80,8 +84,8 @@
 
 
 %% Information about the title, etc.
-\title{Master Thesis}
-\author{Author Name}
+\title{Metric-based Software Parallelisability Analyzer}
+\author{Aleksandr Maramzin}
 
 %% If the year of submission is not the current year, uncomment this line and 
 %% specify it here:
@@ -92,7 +96,9 @@
 
 %% Specify the abstract here.
 \abstract{%
-
+\qquad Parallelism pervades the modern computing world. Almost all modern computing systems provide parallel computing resources to some degree or another. The major problem in the field is that these available resources are not always efficiently utilized. To take the most out of these parallel resources, applications running on them must be parallel as well. \newline 
+\null\qquad Despite progress in parallel programming language design and increased availability of parallel programming frameworks, writing efficient parallel software from scratch is still a challenging task mastered by only a few expert programmers. While these experts combine domain knowledge, algorithmic insight and parallel programming skills, most “average” programmers are often lacking skills in at least one of these areas. In this project we investigate methods for providing programmers with real-time feedback on the quality of their code with respect to parallelisation opportunities and scalability to address short-comings before they manifest as “bad” and hard-to-parallelise code. \newline \null\qquad We draw on the experience of the software engineering community and software metrics originally developed to identify “bad” sequential code, typically prone to errors and hard to maintain. The ambition of this project is to develop novel software parallelisability metrics, which can be used as quality indicators for parallel
+code and guide the software development process towards better parallel code.
 }
 
 %% Now we start with the actual document.
@@ -129,19 +135,24 @@
 %% Include your chapter files here. See the sample chapter file for the basic
 %% format.
 
-\include{src/intro}
-\include{src/conclusions}
+\include{src/introduction}
+\include{src/background}
+\include{src/implementation}
+\include{src/benchmarks}
+\include{src/analysis}
+\include{src/results}
 %% ... etc ...
 
 %%%%%%%%
 %% Any appendices should go here. The appendix files should look just like the
 %% chapter files.
-\appendix
-\include{src/appendix1}
+%%\appendix
+%%\include{src/appendix1}
 %% ... etc...
 
 %% Choose your favourite bibliography style here.
-\bibliographystyle{apalike}
+%%\bibliographystyle{plain}
+\bibliographystyle{nosrt}
 
 %% If you want the bibliography single-spaced (which is allowed), uncomment
 %% the next line.

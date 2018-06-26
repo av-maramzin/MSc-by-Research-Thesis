@@ -1,0 +1,21 @@
+
+\chapter{Introduction}
+
+Parallelism pervades the modern computing world. In the past parallel
+computations used to be employed only in high performance scientific systems, but
+now the situation has changed. Parallel elements present in the design of almost all modern computers from small embedded processors to large-scale supercomputers
+and computing networks. Unfortunately, these immense parallel computing resources
+are not always fully utilized during computations due to several problems in the field: 
+
+1. Abundance of legacy applications from previous sequential computing era. That abundance is one source of problems. Legacy applications are not designed to run on parallel machines and, by default, do not take advantage of all underlying resources. Automatic parallelisation techniques have been developed to transform these sequential applications into parallel ones. However, these techniques cannot efficiently deal with some codes in the spectrum of existent applications. Pointer-based applications with irregular data structures, applications with loop carried dependencies and entangled control flow have proven to be challenging to automatic parallelisation. Very often such programs hide significant amounts of parallelism behind suboptimal implementation constructs and represent meaningful potential for further improvements. 
+
+2. Difficulty of manual parallel programming. Hidden potential can be realised by writing parallel programs (applications designed to run on parallel systems) manually. However, the task of manual parallel programming is rather challenging by itself. To create efficient and well-designed parallel software programmer must be aware of application's domain field, must have
+good algorithmic background as well as solid general programming skills and
+working knowledge of exact parallel programming framework they are using. Most
+“average” programmers lack some of the necessary skills out of that set, which
+hinders the potential of manual parallelisation. Sometimes sloppy program
+parallelisation can even slow sequential programs down due to parallel
+synchronisation/communication overhead incurred. In our project we propose to research the question of software parallelisability metrics. This research idea draws on the existent work in the area of software quality, where numerous software metrics have been proposed. Section 3 of this proposal gives a brief overview of the major software metrics to date. In many cases they can be used to supplement software engineering expertise and common sound judgement when it comes to engineering and managerial decisions during software development. These metrics are designed to address the issues of source code complexity, testability, maintainability, etc. and usually show a good correlation between these properties of software and their values. Despite possible correlations between some of these metrics and application performance, these metrics are not designed for that task. Performance of many compute-intensive applications on modern computers is directly proportional to their parallelisibility. To our knowledge, there are no software metrics, which can be used for judging about source code parallelisability and that research area seems to be unexplored.
+Integration of such parallelisibility metrics into major Interactive Development
+Environments (IDEs) could alleviate parallel programming task by providing programmers with real-time feedback about their code. Moreover, new software
+parallelisibility metrics have a potential of paving the way into the new areas of parallel programming research.

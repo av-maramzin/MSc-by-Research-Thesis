@@ -1,0 +1,32 @@
+\chapter{Tool Implementation}
+
+\qquad The tool developed for source code parallelisability metrics research is completely based on the \textsc{LLVM} library of modular and reusable compiler technologies \cite{llvm} \cite{llvm-official-website} and implemented as a set of LLVM passes (see LLVM online documentation for futher technical details \cite{llvm-online-docs}). The tool can be found at \cite{ppar-tool} and is implemented as a set of LLVM passes, which heavily rely on the standard C++ template mechanism.   
+
+The tool operates on the level of LLVM intermediate representation \cite{llvm-online-docs-ir} (LLVM IR) and completely decoupled from input languages as well as from target machine instruction set.
+
+\quad Conceptually the tool does the following. It accepts C/C++ programs as and input 
+
+\section{LLVM analyses used in the tool} 
+There are several LLVM provided analysis passes being used in the tool.
+
+\subsection{LoopInfo analysis}
+This analysis function pass identifies all natural loops withing the given function and assigns a loop depth to every function's basic block. This analysis calculates the nesting structure of loops in the function. For each natural loop identified, this analysis identifies natural loops, contained entirely within the loop and basic blocks that make up the loop. 
+
+\subsection{DependenceAnalysis analysis}
+
+\section{Dependence Graphs}
+\qquad Since LLVM, as of version 6.0, does not currently provide a standard Dependence Graph (DG) implementation, custom graph building facilities were implemented as a \textbf{Graph\textless \textsc{NODE},\textsc{EDGE}\textgreater} C++ template. Template expects two parameters, which must be pointers to the NODE and EDGE classes. These classes represent information assosiated with every graph node and edge correspondingly.   
+
+\subsection{Data Dependence Graph (DDG) pass}
+
+\subsection{Memory Dependence Graph (DDG) pass}
+
+\subsection{Control Dependence Graph (DDG) pass}
+
+\subsection{Program Dependence Graph (DDG) pass}
+
+\section{Loop Decoupling Pass} 
+
+\section{DOT graph printing facilities} 
+
+\section{Metric Groups}
