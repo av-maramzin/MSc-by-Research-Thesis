@@ -1,0 +1,31 @@
+\chapter{Software Parallelisability Metrics}
+\qquad This chapter defines proposed software source code parallelisability metrics and gives the basic intuition behind them. Proposed metrics inherited dependence-based nature from the work \cite{optimizing-compilers-book}. This book is built on and describes the results gathered through countless years of research and tremendous amount of work done in the field of optimizing compilers and high-performance computer architectures. \newline\null\qquad The chapter is structured in the following way. Section \ref{metrics-foundation-and-perspective} puts the metrics work into the context and gives the general perspective from which one has to look at parallelisability metrics. Section \ref{metrics-metric-groups} introduces the actual metrics, along with the basic motivation for them. Metrics are introduced as a set of conceptual groups. Each group has roughly the same intuition and motivation for all its metrics.  
+
+\section{General foundation and perspective of the work} \label{metrics-foundation-and-perspective}
+
+\subsection{Diversity in modern computer languages}
+
+\subsection{The modern role of compilers}
+
+\subsection{The famous 80/20 rule}
+
+
+\subsection{Dependence-based approach to metrics computation}
+\qquad Program parallelisation of program statements is basically hindered by the execution-order constraints imposed on those statements, which, in turn, are defined by different sorts of program dependencies, which were described in the section \ref{background-dependence-theory} of the thesis.   
+
+\section{Metric Groups}
+\label{metrics-metric-groups}
+
+\qquad The whole set of proposed metrics is divided into several concepual groups. 
+
+\subsection{Loop Proportion Metrics}
+\subsubsection{Loop Absolute Size}
+\subsubsection{Loop Absolute Size}
+\subsubsection{Loop Absolute Size}
+
+\subsection{Loop Dependence Metrics}
+
+\subsection{Loop Cohesion Metrics}
+\qquad The main motivation behind the metrics out of this group is the tighter the parts of a loop are coupled together (in terms of dependencies), the harder it is going to be to split and parallalize the loop.   
+
+
