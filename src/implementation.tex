@@ -1,18 +1,25 @@
-\chapter{Tool Implementation}
-\qquad The tool developed for source code parallelisability metrics research is completely based on the \textsc{LLVM} library of modular and reusable compiler technologies \cite{llvm} \cite{llvm-official-website} and implemented as a set of LLVM passes (see LLVM online documentation for futher technical details \cite{llvm-online-docs}). The tool can be found at \cite{ppar-tool} and is implemented as a set of LLVM passes. All parts of the tool rely heavily on the standard C++ template mechanism and C++ Standard Template Library (STL). \newline \null\qquad The tool operates on the level of LLVM intermediate representation \cite{llvm-online-docs-ir} (LLVM IR) and completely decoupled from input languages as well as from target machine instruction set. Theoretically the tool can be used for source code parallelisability analysis of any arbitrary programming languages as it does not depend on any exact programming language concepts, data structures and constructs (such as conditional loops, for loops, range-for loops, goto statements, lists, maps, etc). The tool operates on the level of different program dependencies (data, control, etc), which are abstracted away from programming languages domain into a separate dependence analysis theory. In order to use a tool, one must provide a way of compiling input language into LLVM intermediate representation. \newline \null\qquad Conceptually the tool does the following. It accepts C/C++ programs as and input. \newline \null\qquad In this project all proposed concepts are being examined with the use of Clang/Clang++ as a front end to transform input C/C++ source code into LLVM instruction set. 
+\chapter{Software parallelisability metrics tool}
+\qquad This chapter describes the tool developed for software source code parallelisability metrics research, how to use it, its software architecture and all the underlying technologies and libraries used during its development. \newline\null\qquad The tool is developed with the C++ language and is almost completely based on the \textsc{LLVM} library of modular and reusable compiler technologies \cite{llvm} \cite{llvm-official-website} and implemented as a set of LLVM passes (see LLVM online documentation for futher technical details \cite{llvm-online-docs}). The tool can be found at \cite{ppar-tool}. All parts of the tool rely heavily on the standard C++ template mechanism and C++ Standard Template Library (STL). \newline \null\qquad The tool operates on the level of LLVM intermediate representation \cite{llvm-online-docs-ir} (LLVM IR) and completely decoupled from input languages as well as from target machine instruction sets. Theoretically the tool can be used for source code parallelisability analysis of any arbitrary programming languages as it does not depend on any exact programming language concepts, data structures and constructs (such as conditional loops, for loops, range-for loops, goto statements, lists, maps, etc). The tool operates on the level of program dependencies (data, control, etc), which are abstracted away from programming languages domain into a separate dependence analysis theory. In order to use a tool, one must provide a way of compiling input language into LLVM intermediate representation. \newline \null\qquad Conceptually the tool does the following. It accepts C/C++ programs as and input. \newline \null\qquad In this project all proposed concepts are being examined with the use of Clang/Clang++ as a front end to transform input C/C++ source code into LLVM instruction set. \newline\null\qquad The remainder of the chapter is structured as follows. Section \ref{implementation-llvm-analyses} briefly describes parts of the LLVM library used in the project. Descriptions are mostly taken from the source code of LLVM and can be studied in more details at \cite{llvm-doxygen-docs}.     
 
-\section{LLVM analyses used in the tool} 
+\section{LLVM analyses used in the tool} \label{implementation-llvm-analyses}
 \qquad There are several LLVM provided analyses being used by the tool.
+
+\section{Software architecture}
 
 \subsection{LoopInfo analysis}
 \qquad This analysis function pass identifies all natural loops withing the given function and assigns a loop depth to every function's basic block. This analysis calculates the nesting structure of loops in the function. For each natural loop identified, this analysis identifies natural loops, contained entirely within the loop and basic blocks that make up the loop. 
 
 \subsection{DependenceAnalysis analysis}
 
-\section{Dependence Graphs}
-\qquad Since LLVM, as of version 6.0, does not currently provide a standard Dependence Graph (DG) implementation, custom graph building facilities were implemented as a \textbf{Graph\textless \textsc{NODE},\textsc{EDGE}\textgreater} C++ template. Template expects two parameters, which must be pointers to the NODE and EDGE classes. These classes represent information assosiated with every graph node and edge correspondingly.   
+
+\subsection{Dependence Graphs}
+\qquad Since LLVM, as of version 6.0, does not currently provide a standard dependence graph (DG) implementation, custom graph building facilities were implemented in the project as a \textbf{Graph\textless \textsc{NODE},\textsc{EDGE}\textgreater} C++ template. Template expects two parameters, which must be pointers to the \textbf{NODE} and \textbf{EDGE} classes. These classes represent information assosiated with every graph's node and edge correspondingly. The tool uses several types of dependence graphs in its work and these parameters usually end up to be one of the following. NODE parameter is useually either llvm::Instruction or llvm::BasicBlock   
+
+
 
 \subsection{Data Dependence Graph (DDG) pass}
+
+
 
 \subsection{Memory Dependence Graph (MDG) pass}
 
@@ -23,6 +30,7 @@
 \section{Loop Decoupling Pass}
 \qquad Before metrics can be computed by the tool, the program must be dissasembled into finer pieces of granularity. The tool uses LLVM pass framework to run its passes on functions and builds PDGs for all functions of the given program. Then the tool uses llvm::LoopInfo analysis to get information about all loops inside functions and build separate PDGs for them. Once that is done, the tool finds Strongly Connected Components (SCCs) of the graphs and uses approach described it the Loop Iterator Recognition work \cite{iterator-recognition} to futher decouple identified loops into iterator and payload parts.          
 
-\section{DOT graph printing facilities} 
+\section{Graph visualization facilities}
+\qquad While the main output of the tool is a set of software parallelisability metrics, the tool also accepts a number of side options to produce additional information, which can supplement bare metric values with some additional insights. Since the tool is based on a set of dependence graphs of programs, it is particularly useful to visualize these graphs.  
 
 \section{Metric Groups}
