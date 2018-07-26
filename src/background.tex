@@ -2,10 +2,44 @@
 
 \qquad This chapter of the thesis introduces a reader into the context of the work. First, it describes  
 
-\section{Software quality metrics} \label{background-software-quality-metrics}
+\section{Software metrics in computer science} \label{background-software-metrics-in-cs}
+\qquad The idea of software metrics is definitely not a new one. Quantitative
+measurements lie as the essence of all exact sciences and there have been numerous efforts to introduce objective metrics in computer science as well.
+As of the moment computer science quantitative metrics have found their
+application mostly in the fields of software quality assessment, software products complexity and software development as a process. These metrics measure
+properties of software products such as source code complexity, modularity,
+testability and ultimately maintainability. Combined with properties related to
+software development processes and projects, they are capable of delivering some
+estimates on the total amount of development efforts and associated monetary costs at the end. The body of research in this relatively new field is very vast. There are a lot of publications on different types of metrics as well as on their evaluation criteria, axioms the metrics must conform to, their validation, applicability, etc. There has been some efforts to conduct a survey of the field and present an overview of the most important and widespread software metrics to date ([1],[2],[3] to name a few). Work [2] distinguishes two major eras in the field: before 1991, where the main focus was on metrics based on the complexity of the code; and after 1992, where the main focus was on metrics based on the concepts of Object Oriented (OO) systems (design and implementation). Earlier Fabrizio Riguzzi's work [1] dated as 1996 resembles
+[2], but also adds some critical insight. Jitender Kumar Chhabra and Varun Gupta in their paper [3] conduct an overview of dynamic software metrics. The later shows that software metrics have gone further from the field of static analysis and moved on to dynamic properties of the software.
 
-\subsection{McCabe's cyclomatic complexity (CC)}
-\cite{cyclomatic-complexity}
+\subsection{Source lines of code (SLOC) / lines of code (LOC)}
+\qquad Source lines of code (SLOC) or lines of code (LOC) is one of the most widely used, well-known and probably one of the oldest software source code metrics to date. As its name implies, SLOC is measured by counting the number of source codelines in order to give approximate estimation to software size and the total amount of efforts (man-hours) required for development, maintenance, etc. Usually comparisons involve only the order of magnitude of lines of code in the projects. An apparent disadvantage of SLOC metric is that its magnitude on the piece of software does not necessarily correlate with the functionality provided by that piece. SLOC values differ from one language to another and heavily depend on the source code formatting and stylistic factors. Despite all of its disadvantages, SLOC is widely used in software projects size estimations and generally gives good correlations between its magnitude and programming efforts.
+
+\subsection{McCabe's cyclomatic complexity (CC)} \cite{cyclomatic-complexity}
+\qquad Another well-known software metric is cyclomatic complexity (CC). The metric was first developed by Thomas J. McCabe in 1976 [4]. The metric is based on the control flow graph (CFG) of the section of the code and basically represents the number of linearly independent paths through that section. Mathematically cyclomatic complexity M of a section of the code is defined as M = E – N + 2P, where E is the number of edges, N is the number of nodes, P is the number of connected components in the section's CFG. For example, the piece of code, which CFG is presented on the Figure 1, has cyclomatic complexity equal to 3. The same value 3 follows form it's mathematical equation M = 8 – 7 + 2 = 3. CC metric has been validated both empirically and theoretically and has a lot of applications.
+
+\subsection{Halstead's complexity measures}
+\qquad Maurice Halstead introduced his software science in 1977 [5]. In his work
+Halstead built an analogy between measurable properties of matter (such as volume, mass and pressure of a gas) and those of a source code. He introduced such notions as program length, program volume and program difficulty based on the number of distinct operands and operators in the program.
+
+\subsection{Software cohesion and coupling}
+Concepts of software coupling and cohesion were introduced into computer
+science by Larry Constantine in the late 1960s, when he was working on the field of structured design. The work [6], published in 1974 outlines the main results of Larry Constantine's research. Coupling is the degree of interdependence between software modules, while cohesion refers to the degree to which the elements inside the module belong together. These concepts are usually contrasted to each other and often establish inverse proportionality: high coupling often correlates with low cohesion and vice versa. Low coupling and high cohesion are usually a sign of a well-designed system. That system consists of the relatively independent modules. Changes in one part do not usually affect another parts. Degree of reusability is high and particular
+system parts (obsolete, malfunctioning, etc.) can be replaced without affecting the rest of the system.
+
+\subsection{Function points}
+\qquad Function point is a “unit of measurement” that is used in order to represent the amount of business functionality present in the piece of software. During functional requirements phase of software development, required functionality is identified. Every function is categorized into one of the following types: output, input, inquiry, internal files and external interfaces. Every function is given some amount of function points, which is based on the experience of the past projects. Function Points were proposed by Allan Albrecht in 1979 [7]. Albrecht observed in his research that Function Points were highly correlated to SLOC (3.1) metric.
+
+\subsection{Object-Oriented software metrics}
+\qquad In the work [8] Chidamber and Kemerer define a suite of metrics for object oriented designs. They define software metrics for several software properties like cohesion, coupling and complexity. Some examples are presented below:
+- Lack of Cohesion in Methods (LCOM): LCOM = (P > Q) ? P – Q : 0, where P
+and Q are the numbers of pairs of class methods that do not use / use common class member variables correspondingly.
+- Coupling Between Object Classes (CBO): for a class CBO equals to the number
+of other classes to which it is coupled. If methods of a class invoke methods or work with member variables of the other class, then classes are coupled.
+
+\subsection{Security metrics for source code structures}
+\qquad Software metrics have found their application in the field of source code security as well. Work [9] gives some examples. Described metrics can be used at different stages of software development. Function points (3.5) can be used at initial stages of functional requirements specification. Software cohesion and coupling concepts (3.4) can be considered during later stages of high-level design specification (particular object-oriented software metrics (3.6)). Cyclomatic complexity (3.2), SLOC (3.1), Halstead's complexity measures (3.3) can be used during final and implementation stages for guiding coding efforts. All these metrics give assessments and predictions related to software quality, maintenance, testability, etc. Despite the possibility of correlations between some of these metrics and application parallelisability, these are not designed to directly judge about it.
 
 \section{Metrics in the area of parallel computing}
 
@@ -14,6 +48,9 @@
 
 \section{Graph theory} \label{background-graph-theory}
 \qquad The work uses some results from the graph theory. In particular, the depth-first search (DFS) graph traversal algorithm and its application to find strongly connected components (SCCs) of graphs. While there are a certain number of variations of these two basic algorithms, the work uses them in the exact form as described in the introduction to algorithms book \cite{introduction-to-algorithms-book}.
+
+\section{Control flow analysis} \label{background-control-flow-analysis}
+\qquad Control flow analysis \cite{advanced-compiler-design-book}
 
 \section{Program dependence graph (PDG)} \label{background-program-dependence-graph}
 

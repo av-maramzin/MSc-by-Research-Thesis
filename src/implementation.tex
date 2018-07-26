@@ -2,7 +2,7 @@
 \qquad This chapter describes the tool developed for software source code parallelisability metrics research, how to use it, its software architecture and all the underlying technologies and libraries used during its development. \newline\null\qquad The tool is developed with the C++ language and is almost completely based on the \textsc{LLVM} library of modular and reusable compiler technologies \cite{llvm} \cite{llvm-official-website} and implemented as a set of LLVM passes (see LLVM online documentation for futher technical details \cite{llvm-online-docs}). The tool can be found at \cite{ppar-tool}. All parts of the tool rely heavily on the standard C++ template mechanism and C++ Standard Template Library (STL). \newline \null\qquad The tool operates on the level of LLVM intermediate representation \cite{llvm-online-docs-ir} (LLVM IR) and completely decoupled from input languages as well as from target machine instruction sets. Theoretically the tool can be used for source code parallelisability analysis of any arbitrary programming languages as it does not depend on any exact programming language concepts, data structures and constructs (such as conditional loops, for loops, range-for loops, goto statements, lists, maps, etc). The tool operates on the level of program dependencies (data, control, etc), which are abstracted away from programming languages domain into a separate dependence analysis theory. In order to use a tool, one must provide a way of compiling input language into LLVM intermediate representation. \newline \null\qquad Conceptually the tool does the following. It accepts C/C++ programs as and input. \newline \null\qquad In this project all proposed concepts are being examined with the use of Clang/Clang++ as a front end to transform input C/C++ source code into LLVM instruction set. \newline\null\qquad The remainder of the chapter is structured as follows. Section \ref{implementation-llvm-analyses} briefly describes parts of the LLVM library used in the project. Descriptions are mostly taken from the source code of LLVM and can be studied in more details at \cite{llvm-doxygen-docs}.     
 
 \section{Tool implementation} \label{tool-implementation}
-\qquad There are several LLVM provided analyses being used by the tool.
+\qquad .There are several LLVM provided analyses being used by the tool.
 
 \subsection{General software architecture} \label{tool-general-software-architecture}
 \qquad The tool is implemented withing LLVM pass framework (see \cite{llvm-online-docs-pass-framework}) and architected as a set of LLVM passes, dependent on each other and interacting through the standard mechanism LLVM pass manager provides. There are basically three types of passes in the tool, which are implemented as C++ template classes:
@@ -44,3 +44,14 @@
 \subsection{Template specializations} \label{tool-template-specs}
 
 \section{Tool use} \label{tool-use}
+
+\subsection{Intel(R) Parallel Studio XE 2018}
+\qquad Whithin the current project boundaries the tool is used in conjunction with Intel(R) Parallel Studio XE 2018 \cite{intel-parallel-studio}. Intel Parallel Studio XE is a software development product developed by Intel. Parallel Studio is composed of several component parts, each of which is a collection of capabilities. 
+
+These tools help developers boost application performance through superior optimizations and Single Instruction Multiple Data (SIMD) vectorization, integration with Intel® Performance Libraries, and by leveraging the latest OpenMP* 5.0 parallel programming models.
+
+Enhanced optimization reports and integration with Intel® VTune™ Amplifier and Intel® Advisor give developers control over code profiles.
+
+For better performance, it is optimized to take advantage of advanced processor features like multiple cores and wider vector registers, including Intel® Advanced Vector Extensions 512 (Intel® AVX-512) instructions. 
+
+Intel® C++ Compiler in Intel® Parallel Studio XE
