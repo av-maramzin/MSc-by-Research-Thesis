@@ -1,11 +1,8 @@
 \chapter{Background} \label{backgroud}
-
-\qquad This chapter of the thesis introduces a reader into the context of the work. First, it describes  
+\qquad This chapter of the thesis introduces a reader into the context of the work. First, it gives a broad overview of various software source code metrics proposed in the field of computer science. Then, it gives an overview of the current software source code metrics, available in the subfield of parallel programming. This overview makes it clear, that there haven't been proposed any metrics, which can be used for judging about source code parallelisability. Mostly, proposed metrics represent different sorts of parallel speedup metrics. \newline \null\qquad Source code parallelisability metrics, examined in this work, are largely based on the generalized profile-guided iterator recognition work \cite{iterator-recognition-paper}. PPar tool, developed for parallelisability metrics collection is basically a pipeline of LLVM passes, which uses iterator recognition at the very beginning.
 
 \section{Software metrics in computer science} \label{background-software-metrics-in-cs}
-\qquad The idea of software metrics is definitely not a new one. Quantitative
-measurements lie as the essence of all exact sciences and there have been numerous efforts to introduce objective metrics in computer science as well.
-As of the moment computer science quantitative metrics have found their
+\qquad The idea of software source code metrics is definitely not a new one. Quantitative measurements lie as the essence of all exact sciences and there have been numerous efforts to introduce objective metrics in computer science as well. As of the moment computer science quantitative metrics have found their
 application mostly in the fields of software quality assessment, software products complexity and software development as a process. These metrics measure
 properties of software products such as source code complexity, modularity,
 testability and ultimately maintainability. Combined with properties related to
@@ -42,9 +39,39 @@ of other classes to which it is coupled. If methods of a class invoke methods or
 \qquad Software metrics have found their application in the field of source code security as well. Work [9] gives some examples. Described metrics can be used at different stages of software development. Function points (3.5) can be used at initial stages of functional requirements specification. Software cohesion and coupling concepts (3.4) can be considered during later stages of high-level design specification (particular object-oriented software metrics (3.6)). Cyclomatic complexity (3.2), SLOC (3.1), Halstead's complexity measures (3.3) can be used during final and implementation stages for guiding coding efforts. All these metrics give assessments and predictions related to software quality, maintenance, testability, etc. Despite the possibility of correlations between some of these metrics and application parallelisability, these are not designed to directly judge about it.
 
 \section{Metrics in the area of parallel computing}
+\cite{parallel-performance-metrics-paper}
+
+The parallel speed-up for a given loop depends on the amount of work, the load balance among threads, the overhead of thread creation and synchronization, etc., but it will generally be less than linear relative to the number of threads used. Algorithmic parallelisability. For a whole program, speed-up depends on the ratio of parallel to serial computation (see any good textbook on parallel computing for a description of Amdahl's Law).
+
+\section{Modern parallelisability advisor tools}
+\label{background-modern-parallelisability-advisor-tools}
+\subsection{Intel(R) Parallel Studio XE 2018}
+\qquad Whithin the current project boundaries the tool is used in conjunction with Intel(R) Parallel Studio XE 2018 \cite{intel-parallel-studio}. Intel Parallel Studio XE is a software development product developed by Intel. Parallel Studio is composed of several component parts, each of which is a collection of capabilities. 
+
+These tools help developers boost application performance through superior optimizations and Single Instruction Multiple Data (SIMD) vectorization, integration with Intel® Performance Libraries, and by leveraging the latest OpenMP* 5.0 parallel programming models.
+
+Enhanced optimization reports and integration with Intel® VTune™ Amplifier and Intel® Advisor give developers control over code profiles.
+
+For better performance, it is optimized to take advantage of advanced processor features like multiple cores and wider vector registers, including Intel® Advanced Vector Extensions 512 (Intel® AVX-512) instructions. 
+
+Intel® C++ Compiler in Intel® Parallel Studio XE
+
+\subsection{Automatic parallelisation with Intel(R) C/C++ compilers (ICC)}
+\qquad Parallelizing application for the sake of performance improvement can be a time-consuming and skill-requiring activity. For applications, containing relatively simple loops and targeting x86 platforms this task can be automated with the help of Intel C++ compiler \cite{intel-multithreading-guide}. With automatic parallelization ICC detects loops that can be safely and efficiently parallelized and generates multithreaded code. It relieves the programmer from searching for loops that are good candidates for parallel execution, performing dependence analysis and adding parallel compiler directives manually. \newline \null\qquad When it comes to automatic program parallelisation, Intel C/C++ compilers are apparently limited to certain types of loops. \newline \null\qquad Along with actual parallelization Intel C/C++ compilers provide developers with a comprehensive parallelisation reports. \newline \null\qquad Intel C/C++ compiler is used withing the scope and timeframe of the current MSc project as loop parallelisation expert. It's parallelisability reports are transformed into the following format, shown in figure below. That data is used for later statistical learning analysis as labels and parallelisability classifications for different loops of NAS benchmarks (see chapter \ref{benchmarks}).      
+   
 
 \section{Dependence theory} \label{background-dependence-theory}
-\cite{optimizing-compilers-book}
+\qquad Modern optimizing and parallelizing compilers use dependence-based approaches to the analyses and transformations they do. Data dependence has been explored since the early days of compilers, dating back to the 1960s, and by now there exist a vast body or research and theory in the domain. The main results and outlines can be found in the optimizing compilers for modern architectures book \cite{optimizing-compilers-book}. Here the brief descriptions fo notions are provided.  
+\subsection{Types of dependencies} \label{background-dependence}
+\qquad Generally speaking, a dependence is anything that introduces execution order constraints on statements or instructions of the sequential program. Statement S2 is dependent on statement S1, if statement S1 must be executed before statement S2. Dependencies may be broadly classified into two different categories: data and control dependencies. If statement S2 consumes the data, produced by S1, then this type of dependence is called data dependence. If whether S2 will be executed or not depends on the outcome of computation done in S1, then the statement S2 is control-dependent on statement S1. \newline  
+\null\qquad Data dependencies are futher subdivided into four subcategories.
+
+\begin{description}
+\item [Read After Write (RAW) dependencies]  
+\item [Write After Read (WAR) dependencies]    
+\item [Write After Write (WAW) dependencies] 
+\item [Read After Read (RAR) dependencies] 
+\end{description}
 
 \section{Graph theory} \label{background-graph-theory}
 \qquad The work uses some results from the graph theory. In particular, the depth-first search (DFS) graph traversal algorithm and its application to find strongly connected components (SCCs) of graphs. While there are a certain number of variations of these two basic algorithms, the work uses them in the exact form as described in the introduction to algorithms book \cite{introduction-to-algorithms-book}.
@@ -52,9 +79,16 @@ of other classes to which it is coupled. If methods of a class invoke methods or
 \section{Control flow analysis} \label{background-control-flow-analysis}
 \qquad Control flow analysis \cite{advanced-compiler-design-book}
 
-\section{Program dependence graph (PDG)} \label{background-program-dependence-graph}
+\section{Program Dependence Graph (PDG)} \label{background-program-dependence-graph}
+\qquad A lot of work has been performed over the years in the area of dependence-based program representations. \newline 
+\null\qquad The Program Dependence Graph (PDG) is an intermediate dependence-based program representation that makes explicit both the data and control dependencies for each operation in a program. A control flow graph [l, 31 has
+been the usual representation for the control flow relationships of a program; the control conditions on which an operation depends can be derived from such a
+graph. An undesirable property of a control flow graph, however, is a fixed
+sequencing of operations that need not hold. The program dependence graph
+explicitly represents both the essential data relationships, as present in the data dependence graph, and the essential control relationships, without the unnecessary sequencing present in the control flow graph.’ These dependence relationships determine the necessary sequencing between operations, exposing potential parallelism. 
 
-\cite{pdg}
+
+
 
 \subsection{Data dependence graph (DDG)} \label{background-ddg}
 \subsection{Memory dependence graph (MDG)} \label{background-mdg}
