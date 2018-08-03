@@ -39,7 +39,10 @@
 \qquad Since LLVM, as of version 6.0, does not currently provide a standard dependence graph (DG) implementation, custom graph building facilities were implemented in the project as a \textbf{Graph\textless \textsc{NODE},\textsc{EDGE}\textgreater} C++ template. Template expects two parameters, which must be pointers to the \textbf{NODE} and \textbf{EDGE} classes. These classes represent information assosiated with every graph's node and edge correspondingly. The tool uses several types of dependence graphs in its work and these parameters usually end up to be one of the following. NODE parameter is useually either llvm::Instruction or llvm::BasicBlock   
 
 \subsection{Graph visualization facilities} \label{ppar-tool-graph-visualizations}
-\qquad While the main output of the tool is a set of software parallelisability metrics, the tool also accepts a number of side command line options that are useful for debugging to produce additional information, which can supplement bare metric values with some additional insights. Since the tool is based on a set of dependence graphs of programs, it is particularly useful to visualize these graphs.  
+\qquad While the main output of the tool is a set of software parallelisability metrics, the tool also accepts a number of side command line options that are useful for debugging to produce additional information, which can supplement bare metric values with some additional insights. Since the tool is based on a set of dependence graphs of programs, it is particularly useful to visualize these graphs. \newline
+\null\qquad \textbf{GraphPrinterPass\textless NODE,EDGE,PASS\textgreater} C++ template is designed for doing exactly that.
+
+
 
 \subsection{Template specializations} \label{ppar-tool-template-specs}
 
