@@ -29,8 +29,64 @@
 \section{Data interpretation and visualization}
 \label{analysis-data-interpretation-and-visualization}
 \subsection{Single loop metrics vs loop parallelisability analysis}
-\qquad The first step in the analysis of collected loop metrics and parallelisability properties is to visualize the data and manually check for existent data patterns and correlations. 
+\qquad The layout of this section corresponds to that of section \ref{metrics-metric-groups}, which describes proposed groups of software parallelisability metrics. Subsections below present their parallelizability correlation results.  
+\subsubsection{Loop proportion metrics}
+\label{analysis-loop-proportion-metrics}
+\qquad Figures \ref{loop-proportions-0} and \ref{loop-proportions-1} present plots of loop proportion metric values, gathered on all NAS benchmark loops. All outliers lying beyond 3 standard deviations have been filtered (see section \ref{analysis-preparation-phase}). 
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/loop-proportions-0.png}
+\caption{\textit{Loop absolute size} metric on the left and \textit{loop payload fraction} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\label{loop-proportions-0}
+\end{figure}
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/loop-proportions-1.png}
+\caption{\textit{Loop critical payload fraction} metric on the left and \textit{loop proper SCCs number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\label{loop-proportions-1}
+\end{figure} \newline
+\null\qquad As it can be seen from the plots, \textit{loop absolute size} does not really correlate with ICC parallelization ability. It must be clear from the nature of the metric. Size by itself does not prohibit loop parallelization. There might be a big loop with no cross-iteration dependencies, which must have a big portion of parallelism and should bring huge overall performance gains with its parallelization. \newline
+\null\qquad There is pretty noticeable correlation between loop parallelisability and values of \textit{loop payload fraction} metric. Green dots are scattered predominantly at the top of the plot. The bigger the payload of a loop in comparison with its iterator, the more seducing this loop for compiler to parallelize. Bigger payloads bring better performance gains with parallelization. Another consideration might also be applied here. Bigger iterators are common for loops, which, for example, perform traversal of more complex data structures like linked-lists or alike. Such loops contain memory operations linking iterator and payload - \textit{iterator payload memory cohesion} metric should be non zero for such loops. Unfortunately, thare are no such loops in NAS benchmark set and the latter metric has been excluded from consideration at all. \newline 
+\null\qquad Despite the fact that \textit{loop proper SCCs number} metric does not correlate with loop parallelizability that much, another metric of the same essense shows pretty good correlations. \textit{Loop critical payload fraction} metric can be used to judge about loop parallelizability. Connection between this metric and parallelizability property follows just out of common sense. Critical payload parts represent strongly connected components with more than one instructions. There are graph loops with forward and back edges inside such SCCs. Usually it happens when two memory instructions reference the same location on different (or the same) loop iterations and introduce 2 inverse-directed edges with anti and true dependencies. Such critical loop payload parts introduce actual parallelization constraints. The left plot in the figure \ref{loop-proportions-1} illustrates this connection. The bigger the critical component in the payload, the harder it is to parallelize the loop.        
 
+\subsubsection{Loop Dependence Metrics}
+\label{analysis-loop-dependence-metrics}
+\qquad Figures \ref{loop-dependencies-number-0}, \ref{loop-dependencies-number-1} and \ref{loop-dependencies-number-2} present plots of loop dependencies number metric values. These metrics do not seem to be particularly reliable, when it comes to judging about loop parallelizability.  
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figs/loop-dependencies-number-0.png}
+\caption{\textit{Critical payload dependencies number} metric on the left and \textit{total payload dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\label{loop-dependencies-number-0}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figs/loop-dependencies-number-1.png}
+\caption{\textit{Critical payload true dependencies number} metric on the left and \textit{payload true dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\label{loop-dependencies-number-1}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figs/loop-dependencies-number-2.png}
+\caption{\textit{Critical payload anti dependencies number} metric on the left and \textit{payload anti dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\label{loop-dependencies-number-2}
+\end{figure} \newline
+\null\qquad These metrics 
+
+\subsubsection{Loop Cohesion Metrics}
+\label{analysis-loop-cohesion-metrics}
+\qquad Figures \ref{loop-cohesion-0} and \ref{loop-cohesion-1} present plots of loop cohesion metric values.   
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figs/loop-cohesion-0.png}
+\caption{\textit{Critical payload total cohesion} metric on the left and \textit{critical payload non-cf cohesion} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\label{loop-cohesion-0}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figs/loop-cohesion-1.png}
+\caption{\textit{Iterator payload total cohesion} metric on the left and \textit{Iterator payload non-cf cohesion} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\label{loop-cohesion-1}
+\end{figure}
 \subsection{Data clustering analysis}
 \label{analysis-data-clustering-analysis}
 \qquad This section describes the results of dataset clustering analysis. Data from the table \ref{analysis-data-table} can be viewed as a set of 13-dimensional vectors, describing NAS benchmark loops. For every loop, thanks to Intel C/C++ compiler, we know the right answer regarding its parallelisability. This section reports studies about correlations between spatial and structural properties of these vectors and parallelisability properties.    
