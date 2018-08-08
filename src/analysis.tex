@@ -1,16 +1,15 @@
 \chapter{Analysis}
-
-\null\qquad After the set of parallelisability metrics has been devised and proposed (see chapter \ref{metrics}) and a working framework for metrics research and analysis has been implemented and set (chapter \ref{ppar-tool} describes developed PPar tool), software source code parallelisability metric values can be gathered and analysed. This analysis task in not that trivial. There is, principally, an unlimited number of ways in which this data can be visualized, interpreted and processed. This chapter describes analysis approaches and presents findings in the report. \newline
+\null\qquad After the set of parallelisability metrics has been devised and proposed (see chapter \ref{metrics}) and a working framework for metrics research and analysis has been implemented and set (chapter \ref{ppar-tool} describes developed PPar tool), software source code parallelisability metric values can be gathered and analysed. This analysis task in not that trivial. There is, principally, an unlimited number of ways in which this data can be visualized, interpreted and processed. This chapter describes taken analysis approaches and presents findings in the report.\newline
 \null\qquad Table \ref{analysis-data-table} below presents the data, used for analysis. This data has been extracted from NAS parallel benchmarks (see chapter \ref{benchmarks}) and transformed into tabular format.
 \begin{figure}[htb]
-	\centering
-	\includegraphics[width=\linewidth]{figs/metrics-table.png}
-	\caption{Analysis input table with computed metrics and ICC parallelizability classification labels.}
-	\label{analysis-data-table}
+\centering
+\includegraphics[width=\linewidth]{figs/metrics-table.png}
+\caption{Analysis input table with computed metrics and ICC parallelizability classification labels.}
+\label{analysis-data-table}
 \end{figure} \newline
-\null\qquad This data is, essentially, a set of loops found in NAS benchmarks. For every single loop a vector of metrics (loop features) has been computed. All loops have passed through Intel C/C++ compiler parallelisability analyses and have been classified (labelled) as parallelizible or not. ICC compiler plays a role of expert in this project. The table \ref{analysis-data-table} contains around 1400 loops with and 13-dimensional feature vector for each. \newline 
-\null\qquad This dataset has been analysed in several ways. First, the collected data has been visualized to see if there are any obvious correlations between loop parallelisability and metric values. Section \ref{analysis-data-interpretation-and-visualization} presents these visualizations and describes all found corerlations. This visualization has been done for every single metric (seen subsection) as well as for the whole set of metrics altogether (see subsection). To visualize the whole combined set of metrics Principal Component Analysis (PCA) and clustering techniques have been used. Section \ref{analysis-manual-analysis} supplements these visualizations with some manually derived insights into analysis results. \newline 
-\null\qquad Then, statistical analysis techniques have been applied to the data. Loop metrics have been viewed as machine learning features in the context of loop parallelisability classification problem. Standard state-of-the-art  machine learning techniques (such as Support Vector Machines (SVM), desicion trees, etc) have been applied to the data and all prediction errors have been compared agains random predictor. Section \ref{analysis-statistical-analysis} presents a report on this. \newline
+\null\qquad This data is, essentially, a set of loops found in NAS benchmarks. For every single loop a vector of metrics (loop features) has been computed. All loops have passed through Intel C/C++ compiler parallelisability analyses and have been classified (labelled) as parallelizible or not. ICC compiler plays a role of an expert in this project. The table \ref{analysis-data-table} contains around 1400 loops with 13-dimensional feature vector for each.\newline 
+\null\qquad This dataset has been analysed in several ways. First, the collected data has been visualized to see if there are any obvious correlations between loop parallelisability and metric values. Section \ref{analysis-data-interpretation-and-visualization} presents these visualizations and describes all found corerlations. This visualization has been done for every single metric (see subsection \ref{analysis-single-metrics-vs-parallelizability}) as well as for the whole set of metrics altogether (see subsection \ref{analysis-data-clustering-analysis}). To visualize the whole combined set of metrics Principal Component Analysis (PCA) and clustering techniques have been used. Section \ref{analysis-manual-analysis} supplements these visualizations with some manually derived insights into benchmarks source code. \newline 
+\null\qquad As another mean of parallelizability metrics examination, statistical analysis techniques have been applied to the data. Loop metrics have been viewed as machine learning features in the context of loop parallelizability classification problem. Standard state-of-the-art  machine learning techniques (such as Support Vector Machines (SVM), desicion trees and neural network based Multi-layer Perceptron (MLP) scikit learn algorithm) have been applied to the data and all prediction errors have been compared against random predictor. Section \ref{analysis-statistical-analysis} presents a report on this.\newline
 \null\qquad There has already been an attempt to apply statistical analysis techniques to see how software quality metrics, such as cyclomatic complexity \ref{background-cyclomatic-complexity} and Halstead's software science measures \ref{background-halsteads-measures} behave on Mozilla Firefox browser and LLVM compiler components library open source codes \cite{source-code-quality-classification-paper}. Authors applied k-means clustering and got 3 clusters of software quality metric values for subroutines. But there were no classifications attached to the input data and no correlations have been examined. There could easily be subroutines of different software quality grades in the same cluster. \newline
 \null\qquad All results have been derived thanks to Python programming language and its packages: pandas \cite{python-lib-pandas}, matplotlib \cite{python-matplotlib} and scikit-learn \cite{python-lib-scikit-learn}. 
 
@@ -28,53 +27,42 @@
 
 \section{Data interpretation and visualization}
 \label{analysis-data-interpretation-and-visualization}
+\qquad This section presents different attempts to find any patterns and correlations in the data from the table \ref{analysis-data-table}. First, every single metric (out of all 13 presented in the table metrics) has been examined alone. Section \ref{analysis-single-metrics-vs-parallelizability} contains all results of single metric parallelizability analysis. Then, the set of metrics has been considered altogether as a whole (as points in 13-dimensional space) in order to find any structural patterns they form. Principal Component Analysis and k-means clustering have been used for that task. Results are presented in subsection \ref{analysis-data-clustering-analysis}.
 \subsection{Single loop metrics vs loop parallelisability analysis}
-\qquad The layout of this section corresponds to that of section \ref{metrics-metric-groups}, which describes proposed groups of software parallelisability metrics. Subsections below present their parallelizability correlation results.  
+\label{analysis-single-metrics-vs-parallelizability}
+\qquad The layout of this section corresponds to that of section \ref{metrics-metric-groups}, which describes proposed groups of software parallelizability metrics. Subsections below present studies of their parallelizability correlation.
 \subsubsection{Loop proportion metrics}
 \label{analysis-loop-proportion-metrics}
-\qquad Figures \ref{loop-proportions-0} and \ref{loop-proportions-1} present plots of loop proportion metric values, gathered on all NAS benchmark loops. All outliers lying beyond 3 standard deviations have been filtered (see section \ref{analysis-preparation-phase}). 
+\qquad Figures \ref{loop-proportions-0} and \ref{loop-proportions-1} present scattered plots of all loop proportion metric values, gathered on NAS benchmark loops. Numbers on vertical axes represent metric values, values on horizontal axes represent particular loops in the set. Dashed horizontal lines, crossing plots, represent mean values for subsets of parallelizible (green) and non-parallelizible (red) loops. Numbers show how many dots lie above and below mean values for red and green subsets. All outliers lying beyond 3 standard deviations have been filtered (see section \ref{analysis-preparation-phase}). 
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\linewidth]{figs/loop-proportions-0.png}
-\caption{\textit{Loop absolute size} metric on the left and \textit{loop payload fraction} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\caption{\textit{Loop absolute size} metric on the left and \textit{loop payload fraction} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly. Dashed lines show mean metric values for red and green subsets correspondingly.}
 \label{loop-proportions-0}
 \end{figure}
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\linewidth]{figs/loop-proportions-1.png}
-\caption{\textit{Loop critical payload fraction} metric on the left and \textit{loop proper SCCs number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\caption{\textit{Loop critical payload fraction} metric on the left and \textit{loop proper SCCs number} metric on the right. Analogous to \ref{loop-proportions-0} figure.}
 \label{loop-proportions-1}
 \end{figure} \newline
-\null\qquad As it can be seen from the plots, \textit{loop absolute size} does not really correlate with ICC parallelization ability. It must be clear from the nature of the metric. Size by itself does not prohibit loop parallelization. There might be a big loop with no cross-iteration dependencies, which must have a big portion of parallelism and should bring huge overall performance gains with its parallelization. \newline
-\null\qquad There is pretty noticeable correlation between loop parallelisability and values of \textit{loop payload fraction} metric. Green dots are scattered predominantly at the top of the plot. The bigger the payload of a loop in comparison with its iterator, the more seducing this loop for compiler to parallelize. Bigger payloads bring better performance gains with parallelization. Another consideration might also be applied here. Bigger iterators are common for loops, which, for example, perform traversal of more complex data structures like linked-lists or alike. Such loops contain memory operations linking iterator and payload - \textit{iterator payload memory cohesion} metric should be non zero for such loops. Unfortunately, thare are no such loops in NAS benchmark set and the latter metric has been excluded from consideration at all. \newline 
-\null\qquad Despite the fact that \textit{loop proper SCCs number} metric does not correlate with loop parallelizability that much, another metric of the same essense shows pretty good correlations. \textit{Loop critical payload fraction} metric can be used to judge about loop parallelizability. Connection between this metric and parallelizability property follows just out of common sense. Critical payload parts represent strongly connected components with more than one instructions. There are graph loops with forward and back edges inside such SCCs. Usually it happens when two memory instructions reference the same location on different (or the same) loop iterations and introduce 2 inverse-directed edges with anti and true dependencies. Such critical loop payload parts introduce actual parallelization constraints. The left plot in the figure \ref{loop-proportions-1} illustrates this connection. The bigger the critical component in the payload, the harder it is to parallelize the loop.        
-
+\null\qquad As it can be seen from the plots, \textit{loop absolute size} metric values do not really correlate with ICC parallelization ability. Mean values of that metric are almost identical, ~91,87 and 94,49 LLVM-IR instructions, for non-parallelizible and parallelizible loop subsets correspondingly. Red and green dots are scattered above and below mean value lines in similar proportions (210/580$\approx$0,36 and 120/360$\approx$0,33) - majority of NAS loops are smaller than 90 LLVM-IR instructions.\newline
+\null\qquad It must be clear from the nature of this metric, that size by itself does not prohibit loop parallelization. There might be a big loop with no cross-iteration dependencies, which must have a big portion of parallelism and should bring huge overall performance gains with its parallelization. And vice versa, there might be a small loop with cross-iteration dependency, which is non-parallelizible.\newline
+\null\qquad There is a pretty noticeable correlation between loop parallelisability and values of \textit{loop payload fraction} metric. Green dots are scattered predominantly at the top of the plot. Dot numbers above and below mean lines are in inverse proportionality for red and greed dot subsets (370/420$\approx$0,88\textless 1 and 300/190$\approx$1,58\textgreater 1).  The bigger the payload of a loop in comparison with its iterator, the more seducing this loop for compiler to parallelize. Bigger payloads bring better performance gains with parallelization. Another consideration might also be applied here. Bigger iterators are common for loops, which, for example, perform traversal of more complex data structures like linked-lists or alike. Such loops contain memory operations linking iterator and payload - \textit{iterator payload memory cohesion} metric should be non zero for such loops. Unfortunately, there are no such loops in NAS benchmark set and the latter metric has been excluded from consideration at all.\newline 
+\null\qquad Despite the fact that \textit{loop proper SCCs number} metric does not correlate with loop parallelizability that much, another metric of the same essense shows pretty good correlations. \textit{Loop critical payload fraction} metric can be used to judge about loop parallelizability. Connection between this metric and parallelizability property follows just out of common sense. Critical payload parts represent strongly connected components with more than one instructions. There are PDG graph loops with forward and back edges inside such SCCs. Usually it happens when two memory instructions reference the same location on different (or the same) loop iterations and introduce 2 inverse-directed edges with anti and true dependencies. Such critical loop payload parts introduce actual parallelization constraints. The left plot in the figure \ref{loop-proportions-1} illustrates this connection. The bigger the critical component in the payload, the harder it is to parallelize the loop.
 \subsubsection{Loop Dependence Metrics}
 \label{analysis-loop-dependence-metrics}
-\qquad Figures \ref{loop-dependencies-number-0}, \ref{loop-dependencies-number-1} and \ref{loop-dependencies-number-2} present plots of loop dependencies number metric values. These metrics do not seem to be particularly reliable, when it comes to judging about loop parallelizability.  
+\qquad Figures \ref{loop-dependencies-number-0}, \ref{loop-dependencies-number-1} and \ref{loop-dependencies-number-2} present plots of loop dependencies number metric values. These metrics do not seem to be particularly reliable, when it comes to judging about loop parallelizability. Due to this reason the two latter plots have been moved into appendix section.\newline  
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{figs/loop-dependencies-number-0.png}
-\caption{\textit{Critical payload dependencies number} metric on the left and \textit{total payload dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
+\caption{\textit{Critical payload dependencies number} metric on the left and \textit{total payload dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly. The other 4 metrics show similar behavior and have been moved into appendix section (see plots \ref{loop-dependencies-number-1} and \ref{loop-dependencies-number-2}).}
 \label{loop-dependencies-number-0}
 \end{figure}
-\begin{figure}[h]
-\centering
-\includegraphics[width=\linewidth]{figs/loop-dependencies-number-1.png}
-\caption{\textit{Critical payload true dependencies number} metric on the left and \textit{payload true dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
-\label{loop-dependencies-number-1}
-\end{figure}
-\begin{figure}[h]
-\centering
-\includegraphics[width=\linewidth]{figs/loop-dependencies-number-2.png}
-\caption{\textit{Critical payload anti dependencies number} metric on the left and \textit{payload anti dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
-\label{loop-dependencies-number-2}
-\end{figure} \newline
-\null\qquad These metrics 
-
+\null\qquad As it can be seen from the figures, distributions of parallelizible and non-parallelizible (green and red) dots are quite uniform throughout the whole spectrum of metric values. Mean metric values on green and red subsets are also quite close to each other. In cases, where they differ, that difference dissappears with addition of excluded outliers to consideration. Even for loops with a huge total dependencies number either in critical part or in the whole loop payload, ICC compiler sometimes is able to generate a parallel version. All these points show that loop dependencies number metrics cannot be used alone for loop parallelizability analysis.    
 \subsubsection{Loop Cohesion Metrics}
 \label{analysis-loop-cohesion-metrics}
-\qquad Figures \ref{loop-cohesion-0} and \ref{loop-cohesion-1} present plots of loop cohesion metric values.   
+\qquad Loop cohesion metrics have been described in section \ref{metrics-loop-cohesion-metrics}. Figures \ref{loop-cohesion-0} and \ref{loop-cohesion-1} present plots of loop cohesion metric values on the set of NAS benchmark loops (roughly 1300 loops).\newline    
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{figs/loop-cohesion-0.png}
@@ -87,20 +75,18 @@
 \caption{\textit{Iterator payload total cohesion} metric on the left and \textit{Iterator payload non-cf cohesion} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
 \label{loop-cohesion-1}
 \end{figure}
+\qquad Critical payload cohesion metrics do not correlate that much with parallelizability property. Figure \ref{loop-cohesion-0} shows approximately similar mean metric values on red and green subsets and it is also visible, that red and green dots are uniformly dispersed on the plane. These cohesion metrics represent the degree of interconnection between critical part of loop payload and its non-critical part.\newline
+\null\qquad On the other hand, \textit{iterator payload cohesion} metrics show a certain degree of correlation with loop parallelizability. It is visible from the two plots on figure \ref{loop-cohesion-1}, that green parallelizible dots are dispersed predominantly at the top of the plane. Mean metric values on red and green subsets tell exactly the same thing: mean metric values for parallelilazible loops tend to be higher than their counterparts on non-parallelizible subsets (0,25 versus 0,20 for \textit{iterator payload total cohesion} and 0,03 versus 0,02 for \textit{iterator payload non-cf cohesion}). Dot numbers above and below mean lines are also in inverse proportionality, as it is visible from figure \ref{loop-cohesion-1}.     
 \subsection{Data clustering analysis}
 \label{analysis-data-clustering-analysis}
-\qquad This section describes the results of dataset clustering analysis. Data from the table \ref{analysis-data-table} can be viewed as a set of 13-dimensional vectors, describing NAS benchmark loops. For every loop, thanks to Intel C/C++ compiler, we know the right answer regarding its parallelisability. This section reports studies about correlations between spatial and structural properties of these vectors and parallelisability properties.    
-
-\subsection{Combined metrics dataset visualization}
-\label{analysis-data-clustering-analysis}
-\qquad This section describes an attempt to conduct structural data analysis and identify separate clusters in the data. Since loops are represented by 13-dimensional vectors, direct dataset visualization is unfeasible. Principal Components Analysis (PCA) has been used to project the data onto 3-dimensional space and visualize it. Figure \ref{metrics-pca-13-to-3} provides an illustration of distribution of metric values on all loops. It is visible from the figure, that data values do not form any apparent clusters, but there are some areas of increased density though.
+\qquad This section describes the results of dataset clustering analysis. Data from the table \ref{analysis-data-table} can be viewed as a set of 13-dimensional vectors, describing NAS benchmark loops. These vectors map loops into 13-dimensional space. It might be interesting to see what spatial patterns and structural properties these mappings conform to. For every loop, thanks to Intel C/C++ compiler, we know the right answer regarding its parallelizability. This section reports studies about correlations between spatial and structural properties of these vector mappings and loops parallelizability.\newline
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\linewidth]{figs/metrics-pca-13-to-3.png}
 \caption{Visualisation of loop metrics dataset spatial distribution (13-dimensional metric vectors have been projected onto 3D space thanks to PCA algorithm) - blue dots correspond to metric values of single loops.}
 \label{metrics-pca-13-to-3}
 \end{figure} \newline 
-\null\qquad Metric dataset projection onto 2D plane looks alike XY projection of 3D PCA mapping (see figure \ref{metrics-pca-13-to-2}). \newline
+\null\qquad Since loops are represented by 13-dimensional vectors, direct dataset visualization is unfeasible. Principal Components Analysis (PCA) has been used to project the data onto 3-dimensional space and visualize it. Figure \ref{metrics-pca-13-to-3} provides an illustration of distribution of metric values on all loops. It is visible from the figure, that data values do not form any apparent clusters, but there are some areas of increased density though. Metric dataset projection onto 2D plane looks like XY projection of 3D PCA mapping (see figure \ref{metrics-pca-13-to-2}).\newline
 \null\qquad Next step is to establish correlation between structural properties of dataset distribution and loop parallelizability. Figure \ref{metrics-pca-parallelizability} provides an illustration for it. Out of that figure it is visible that there is no apparent correlation between combined metric values and parallelizability of loops these metrics represent. 
 \begin{figure}[htb]
 \centering
@@ -108,22 +94,27 @@
 \caption{Visualisation of loop metrics dataset spatial distribution (3D PCA projection on the left, 2D PCA projection on the right) versus parallelizability property. Red dots - non-parallelizible loops; green dots - parallelizible loops}
 \label{metrics-pca-parallelizability}
 \end{figure} \newline
-\null \qquad It would be interesting to see, what kind of loops and metric values form these areas of increased density. To get that information we can apply k-means clustering algorithm and get subsets of loops, which form these condensed clots. We need to pick the number of clusters. The number of clusters might be arbitrary, but from the figure it is visible that 3 or 4 clusters would be quite a close approximation to the given dots distribution. Figure \ref{metrics-4-clusters} illustrates the results of k-means clustering algorithm run with 4 clusters. Algorithm has almost perfectly identified the structure of dots distribution. Maybe yellow and blue subsets must be in the same subset. We can consider all these blue and yellow loops altogether. Some dots (the ones on the boundary of red cluster) also happened to be blue, while red classification would be the most appropriate for them. To exclude these must-be-red blue loops from considerations applied to the blue cluster, euclidean distances from cluster centers were computed for every dot. Only loops near cluster centers are considered in the manual source code study. Table \ref{clusters-metric-values} presents average values for all metrics in 4 clusters. \newline
-\null\qquad 
-
+\null\qquad It would be interesting to see, what kind of loops and metric values form these areas of increased density. To get that information we can apply k-means clustering algorithm and get subsets of loops, which form these condensed clots. We need to pick the number of clusters. The number of clusters might be arbitrary, but from the figure it is visible that 3 or 4 clusters would be quite a close approximation to the given dots distribution. Figure \ref{metrics-4-clusters} illustrates the results of k-means clustering algorithm run with 4 clusters. Algorithm has almost perfectly identified the structure of dots distribution. Maybe yellow and blue subsets must be in the same subset. We can consider all these blue and yellow loops altogether. Some dots (the ones on the boundary of red cluster) also happened to be blue, while red classification would be the most appropriate for them. To exclude these must-be-red blue loops from considerations applied to the blue cluster, euclidean distances from cluster centers were computed for every dot. Only loops near cluster centers are considered in the manual source code study. Table \ref{clusters-metric-values} presents average values for all metrics in 4 clusters. \newline
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\linewidth]{figs/metrics-4-clusters.png}
 \caption{k-means algorithm classified the dataset into 4 separate clusters.}
 \label{metrics-4-clusters}
 \end{figure}
-
 \begin{figure}[htb]
 \centering
 \includegraphics[width=\linewidth]{figs/clusters-metric-values.png}
 \caption{Average metric values for 4 different clusters}
 \label{clusters-metric-values}
-\end{figure} 
+\end{figure} \newline 
+\null\qquad Out of that table \ref{clusters-metric-values} and figure \ref{metrics-4-clusters} we can derive metric growth directions. All critical payload part related metrics show tendency to grow anti-clockwise, having minimum values in the green dot cluster and maximum values in the red one. We can combine all these metrics in one \textit{critical component size} characteristic. Cohesion between loop iterator and payload parts grows from green cluster towards all 3 other clusters, reaching its maximum values in blue and yellow clusters. \textit{Loop absolute size} has a mirrored (in relation to \textit{iterator payload cohesion} metric) pattern of growth. It starts to grow in the yellow cluster and takes on higher values as it reaches 3 other clusters. Figure \ref{clusters-metric-values} presents the final illustration for all considerations above.\newline   
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/metrics-growth-directions.png}
+\caption{Correspondence between 3D PCA projected distribution and original metric values, set by growth arrowed lines.}
+\label{clusters-metric-values}
+\end{figure}\newline
+\null\qquad The next section \ref{analysis-manual-analysis} provides examples of loops, which can be found in these 4 built clusters.  
 
 \section{Manual analysis}
 \label{analysis-manual-analysis}
@@ -146,6 +137,7 @@ for (i = 0; i < MK + 1; i++) {
 
 \null\qquad Loop in the listing \ref{lst:metrics-loop-example-2} has a pretty simple PDG. There are no critical SCCs inside loop's payload. However, ICC compiler cannot parallelize this loop due to \textit{randlc} function call. Compiler has to be conservative and assume, that this function call introduces cross-iteration dependencies between iterations of the loop.\newline
 \null\qquad This example exposes drawback of proper SCCs number metric. This metric only considers structural properties of PDG and does not examine the nature of instructions, constituting the loop. 
+\subsection{Manual loop clustering analysis}
 
 
 \section{Statistical analysis}
