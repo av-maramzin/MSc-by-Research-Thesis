@@ -1,31 +1,60 @@
-\chapter{Software Parallelisability Metrics} \label{metrics}
-\qquad This chapter defines proposed software source code parallelisability metrics and gives the basic intuition behind them. Proposed metrics inherited dependence-based nature from the work \cite{optimizing-compilers-book}. This book is built on and describes the results gathered through countless years of research and tremendous amount of work done in the field of optimizing compilers and high-performance computer architectures. \newline\null\qquad The chapter is structured in the following way. Section \ref{metrics-foundation-and-perspective} puts the metrics work into the context and gives the general perspective from which one has to look at parallelisability metrics. Section \ref{metrics-metric-groups} introduces the actual metrics, along with the basic motivation for them. Metrics are introduced as a set of conceptual groups. Each group has roughly the same intuition and motivation for all its metrics.  
+\chapter{Software Parallelisability Metrics}
+\label{metrics}
+\qquad This chapter defines proposed software source code parallelizability metrics and gives the basic intuition behind them. It was decided, that all parallelizability metrics would be computed on the Program Dependence Graph (PDG) intermediate representation of programs (see \ref{background-program-dependence-graph}) and would rely on dependence analysis theory (see \ref{background-dependence-theory}) as their foundation.\newline
+\null\qquad The chapter is structured in the following way. Section \ref{metrics-foundation-and-perspective} puts the metrics work into the context and gives the general perspective from which one has to look at parallelisability metrics. Section \ref{metrics-use} gives a motivating example and presents the output, devised metrics should ideally provide. Section \ref{metrics-metric-groups} introduces the actual metrics, along with the basic motivation for them. Metrics are introduced as a set of conceptual groups. Each group has roughly the same intuition and motivation for all its metrics.
 
 \section{General foundation and perspective of the work} \label{metrics-foundation-and-perspective}
 
 \subsection{Diversity in modern computer languages}
 \label{metrics-diversity-in-modern-computer-languages}
-\qquad There are thousands of different languages in the modern field of computer science. Computer programming languages have passed a long way from assembly languages operating at the level of native machine instructions to languages operating with concepts at a much higher abstraction levels. The reason behind such a change in the domain of computer languages is the ease, with which a human programmer can write a software. \newline
-\null\qquad Unfortunately, this move to a higher-level languages comes with drawbacks as well. With the gain in programmer's productivity, such change also brings losses in software performance. It becomes increasingly difficult for the compiler to translate abstract languages into the sequence of machine instructions effectively. \newline
+\qquad There are thousands of different languages in the modern field of computer science. Computer programming languages have passed a long way from assembly languages operating at the level of native machine instructions to languages operating with concepts at a much higher abstraction levels. The reason behind such a change in the domain of computer languages is the ease, with which a human programmer can write a software.\newline
+\null\qquad Unfortunately, this move to a higher-level languages comes with drawbacks as well. With the gain in programmer's productivity, such change also brings losses in software performance. It becomes increasingly difficult for the compiler to translate abstract languages into the sequence of machine instructions effectively.\newline
 \null\qquad If we are to use these easy for human comprehension high-level languages, we must have tools for their efficient transformation into the form, suitable for direct execution on different native machine platforms.
 
 \subsection{The modern role of compilers}
 \label{metrics-modern-role-of-compilers}
 \quad As was outlined in the previous section \ref{metrics-diversity-in-modern-computer-languages}, novadays compilers perform enabling role for the use of different sorts of modern computer languages. \newline
-\null\quad In the modern state of the field, the principal role of compiler is to map high-level algorithms onto different sorts of high-performance architectures. The notion of high-performance architectures is really general and usually represents the combining term for all of the following: parallel cluster, multi-core and multi-processor architectures, vector processors, pipelined superscalar processors and all the possible combinations and co-designs of these. \newline
+\null\quad In the modern state of the field, the principal role of compiler is to map high-level algorithms onto different sorts of high-performance architectures. The notion of high-performance architectures is really general and usually represents the combining term for all of the following: parallel cluster, multi-core and multi-processor architectures, vector processors, pipelined superscalar processors and all the possible combinations and co-designs of these (see \cite{patterson-and-hennessy-cod} and \cite{patterson-and-hennessy-quantitative-approach}).\newline
 \null\quad Before this mapping can be done, compilers must perform extensive analyses to determine what parts of program computations depend on one another and what parts can be scheduled for parallel execution on high-performance machines. These analyses are mostly dependence-based by their nature.   
 
 \subsection{The famous 80/20 rule}
 \label{metrics-famous-80-20-rule}
-\qquad Loops and arrays the most fertile ground for optimizations
+\qquad As in many areas, computer science has its own 80/20 rule: 20\% of the code executes 80\% of the time. The hotspots of software programs are loops and other structures of repeted computation. Hence, loops and arrays present the most fertile ground for compiler optimizations. Metrics, being considered in this work operate on loops. For every single loop PPar tool (see chapter \ref{ppar-tool}) computes a vector of metrics (features), characterizing it. Parallelizability metrics can be devised for the whole program functions or fragments of code, but for the start, loops seem to be the most interesting and promising program parts. 
 
 \subsection{Dependence-based approach to metrics computation}
 \label{metrics-dependence-based-approach}
-\qquad Program parallelisation of program statements is basically hindered by the execution-order constraints imposed on those statements, which, in turn, are defined by different sorts of program dependencies, which were described in the section \ref{background-dependence-theory} of the thesis.   
+\qquad Compiler parallelisation of program statements is basically hindered by the execution-order constraints imposed on those statements, which, in turn, are defined by different sorts of program dependencies, which were described in the section \ref{background-dependence-theory} of the thesis. That consideration makes it clear, that in order to be credible software parallelizability metrics must be based on loop dependence properties and constraints. Program Dependence Graph (PDG) represents an intermediate representation of the program, which reflects all types of dependencies present in the program. 
 
 \section{Metrics use}
 \label{metrics-use}
-\qquad Ideally, metrics should provide a quantitative measure of loop's algorithmic parallelisability (say, this loop is 80\% parallelisible). While existent modern tools (like \ref{background-modern-parallelisability-advisor-tools}) give answers only in binary format: yes, this loop has been parallelised or no, it hasn't been parallelised.
+\qquad The main goal of software parallelizability metrics is to provide a developer with additional feedback regarding loop parallelizability, which could extend binary "yes"/"no" answers of modern parallelizing compilers (see section \ref{background-modern-parallelisability-advisor-tools}) by providing some quantitative measures of loop algorithmic parallelizability. Not only compiler answers have a binary nature, as it is shown in the section \ref{background-modern-parallelisability-advisor-tools}, sometimes Intel compiler has to be over-conservative and assumes presence of dependencies, where they do not actually exist. Such feedback might be misleading for inexperienced parallel software developer.\newline   
+\null\qquad Ideally, metrics should provide a quantitative measure of loop's algorithmic parallelizability (say, this loop is 80\% parallelizible) and where compiler has to be over-conservative due to functional semantic requirements, feedback metrics do not have any constraints.
+
+\begin{lstlisting}[caption={Example of 100\% parallelizible loop. Intel compiler successfully parallelizes it.}, captionpos=b, label=lst:metrics-loop-motivation-0]
+for (unsigned int i = 0; i < size; i++) {
+	c[i] = a[i] + b[i];
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Loop with true cross iteration dependency. Intel compiler detects dependency and refuses to parallelize the loop.}, captionpos=b, label=lst:metrics-loop-motivation-1]
+for (unsigned int i = 1; i < 100; i++) {
+	a[i] = a[i-1];
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Algorithmic reduction, hidden behind unsuccessful data structure choice (linked-list). If linear array was used instead, the loop would be parallelized by Intel compiler.}, captionpos=b, label=lst:metrics-loop-motivation-2]
+while (list_it != nullptr) {
+	sum += list_it->value;
+    list_it = list_it->next;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Loop with optimal data structure choice for algorithmic reduction. Intel compiler successfully parallelizes it.}, captionpos=b, label=lst:metrics-loop-motivation-3]
+while(i < size) {
+	sum += c[i++];
+}
+\end{lstlisting}
 
 \section{Metric Groups}
 \label{metrics-metric-groups}

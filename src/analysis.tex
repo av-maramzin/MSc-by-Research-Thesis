@@ -116,17 +116,112 @@
 \end{figure}\newline
 \null\qquad The next section \ref{analysis-manual-analysis} provides examples of loops, which can be found in these 4 built clusters.  
 
+\subsection{Decision tree based parallelisability classification}
+\qquad Decision tree is another human-comprehensible dataset visualization technique. Figure \ref{decision-tree-depth-3} has been produced with scikit-learn \cite{python-lib-scikit-learn} decision tree classifier and represents a decision tree learned from metrics table dataset \ref{analysis-data-table}. Decision tree sorts metric vectors down the tree. Sorting starts from the root and goes along all the sorting rules down to the leaf. Leaf provides the final metric vector classification. For simplicity and feasibility of visualisation, the depth of the tree has been limited to 3. This limitation leads to some probabilistic errors in the final loop parallelizability classification, but is still capable of capturing the main trends in the data. \ref{analysis-data-table}.\newline
+\null\qquad The construction of decision tree is based on the notions of entropy and information gain. Decision tree algorithm finds and places in the root of the tree a rule, which separates the dataset in a way, that brings the biggest information gain (in other words, decreases entropy of the dataset the most). Then it goes along all the branches down the tree and places the most information gaining rule at every node, calculated on the dataset subset, corresponding to that node.\newline
+\null\qquad As we can see from the figure \ref{decision-tree-depth-3}, scikit-learn implementation of decision tree algorithm picked \textit{iterator-payload non-cf cohesion} as a metric, separating the input dataset in the best way. The input dataset contains 1277 metric vectors, 790 of them are classified as non-parallelizible and 487 as parallelizible. The entropy of such a dataset equals to $S=-\frac{790}{1277}\cdot \log_{2}\frac{790}{1277}-\frac{487}{1277}\cdot \log_{2}\frac{487}{1277}\approx 0.96$. After the rule in the root split the dataset into two subsets, corresponding to the left and right subtrees, the entropy became $S=\frac{790}{1277}\cdot S_{True} + \frac{487}{1277}\cdot S_{False} = \frac{793}{1277}\cdot (-\frac{591}{793}\cdot \log_{2}\frac{591}{793}-\frac{202}{793}\cdot \log_{2}\frac{202}{793}) + \frac{484}{1277}\cdot (-\frac{199}{484}\cdot \log_{2}\frac{199}{484}-\frac{285}{484}\cdot \log_{2}\frac{285}{484})\approx $.     
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/decision-tree-depth-3.pdf}
+\caption{Dataset \ref{analysis-data-table} decision tree, limited to the depth of 3.}
+\label{decision-tree-depth-3}
+\end{figure}\newline
+\null\qquad For the purpose of our work we can interpret that decision tree in the following way. If we use \textit{iterator-payload non-cf cohesion} metric to judge about loop parallelizability, then we should compare the value of that metric for a loop being considered against 0,03. If the value on the loop is grater than 0,03, then the loop is parallelizible with probability of $\frac{285}{484}\approx 60\%$ and non-parallelizible with probability of $\frac{199}{484}\approx 40\%$. That numbers do not give us a lot of information, but if value of the metric on a loop happens to be below 0,03, then the loop is most likely to be non-parallelizible with probability of $\frac{591}{793}\approx 75\%$. The latter signals loop code developer to reconsider his code, if he wants his code to take advantage of parallelization.\newline 
+\null\qquad These are basically the same results as ones in the section \ref{analysis-single-metrics-vs-parallelizability} of the current chapter, but decision tree methods have more solid mathematical grounds and foundation. Decision tree algorithm automatically finds a decision boundary in the range of single metric values, that splits the dataset in the most information gaining way. The tree on the figure \ref{decision-tree-depth-3} has been built from the set of all 13 metrics. According to the algorithm criteria \textit{iterator-payload non-cf cohesion} metric is the best for loop parallelizability analysis task. If we exclude that metric from the set of metrics for the root rule search, or even use just one metric, we can find decision boundaries with corresponding probabilities for all more or less parallelizability correlating metrics. Figure \ref{decision-trees-single-metrics} shows the result.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/decision-trees-single-metrics.png}
+\caption{Decision boundaries and corresponding parallelizable/non-parallelizable probabilities for the best corerlating single metrics.}
+\label{decision-trees-single-metrics}
+\end{figure}\newline
+\null\qquad We can see from the above figure \ref{decision-trees-single-metrics}, that if we use \textit{iterator-payload total cohesion} as a root node instead, we are going to get 0,287 decision boundary with 70\% non-parallelizible and 30\% parallelizible below 0,287 and 41\% non-parallelizible and 59\% parallelizible above the boundary. So, \textit{iterator-payload total cohesion} is slightly worse than \textit{iterator-payload non-cf cohesion}. It makes sence, since most iterators have control-flow structures, controlling conditions of the loop, but true dependencies are usually introduced by data edges from iterator to the payload. Metric \textit{loop critical payload fraction} can be used in the inverse way. If the value of this metric for a given loop happens to be greater than 0,33 decision boundary, then this loop is 74\% non-parallelizible. The latter result correlates with the common sense: the bigger critical payload part of the loop, the harder this loop is for dependence breaking and parallelization. The last metric in the figure \ref{decision-trees-single-metrics} is \textit{loop payload fraction}. We can see that the decision boundary for that metric is 0.391. So, if the payload of the loop happes to be less than 40\% of the total loop size, then this loop most likely is non-parallelizible with corresponding probability of approximately 73\%. That also makes sense, since big iterators include too much computations in them, which makes such loops hard to parallelize. Computations should be concentrated in the payload of the loop and iterators should be relatively simple.\newline
+\null\qquad We don't necesserily need to use only single metrics. For a given loop we can compute a set of metrics and walk with their corresponding values down the decision tree in the figure \ref{decision-tree-depth-3}, which has been taught by parallelizible Intel C/C++ compiler. Use of multiple features increases the accuracy of results. For example, lets look at the figure \ref{decision-tree-depth-3}. Once we checked a loop being examing against the first root node rule and identified that the \textit{iterator-payload non-cf cohesion} metric happened to be greater than 0,03 decision boundary, we can check the second rule, namely $\textit{iterator-payload non-cf cohesion}\leq 0,21$. If we go along the blue (parallelizible) boxes, than we get $\frac{281}{434}\approx 65\%$ parallelizability chance against 59\% after only \textit{iterator-payload non-cf cohesion} boundary check. While parallelizability probabilities may not seem big enough for being worth the analysis, non-parallelizability probability in the left subtree can reach 85\% for a relatively big (374 samples) subset. For getting that estimate, metric values on a loop must satisfy to a system of 3 inequalities:\newline
+\begin{equation*}
+\begin{cases}
+\begin{aligned}
+\textit{iterator-payload non-cf cohesion}            &\le 0,029 \\[1ex]
+\textit{loop payload fraction} &\le 0.189 \\[1ex]
+\textit{loop absolute size} &\leq 495
+\end{aligned}
+\end{cases}
+\end{equation*}\newline
+\null\qquad If we limit the depth of decision tree to 5 instead of 3, decision tree algorithm is going to add less parallelizability correlating metrics to consideration as well. Non-parallelizible predictions are not that interesting as parallelizable. Decision tree of depth 5 can predict parallelizability with better probabilities. For example, the two systems of inequalities below are going to conclude that a given loop is $\frac{207}{322}\approx 64\%$ and $\frac{56}{61}\approx 92\%$ parallelizable correspondingly.\newline
+\null\qquad It would be of special interest to take a look at loops, which satisfy all these inequalitis, but nonetheless end up to be non-parallelizible. Such loops have not been parallelized by Intel ICC compiler, but have been classified as parallelizible by the set of metrics. If there are any among these loops, that are algorithmically parallel, but have not been parallelized by Intel compiler due to some lower-level technical issues, then these metrics find to be quite useful by telling software developed, that he should not listen to Intel compiler and take a closer human look at them. Section conducts such an analysis.
+\begin{equation*}
+\begin{cases}
+\begin{aligned}
+\textit{iterator-payload non-cf cohesion}            &\le 0,029 \\[1ex]
+\textit{iterator-payload total cohesion} &\leq 0,21 \\[1ex]
+\textit{loop critical payload fraction} &\leq 0,349 \\[1ex]
+\textit{loop proper SCCs number} &\leq 1,5 \\[1ex]
+\textit{critical payload true dependencies number} &\leq 6,5
+\end{aligned}
+\end{cases}
+\end{equation*}\newline
+\begin{equation*}
+\begin{cases}
+\begin{aligned}
+\textit{iterator-payload non-cf cohesion}            &\le 0,029 \\[1ex]
+\textit{iterator-payload total cohesion} &\leq 0,21 \\[1ex]
+\textit{loop critical payload fraction} &\leq 0,349 \\[1ex]
+\textit{loop proper SCCs number} &\leq 1,5 \\[1ex]
+\textit{loop payload fraction} &\leq 0,575
+\end{aligned}
+\end{cases}
+\end{equation*}\newline
+    
+
 \section{Manual analysis}
 \label{analysis-manual-analysis}
+\subsection{NAS benchmark BT}
+\qquad Let's start from a trivial case and consider a loop, presented in listing \ref{lst:non-parallel-0}. This loop fills timer records array \textit{trecs[]} with timer reads. The latter are computed inside \textit{timer\_read()} function. Intel C/C++ compiler has to be conservative and does not parallelize that function, since it is not clear, whether there is a cross-iteration dependency introduced from inside the function, but the decision tree, presented in the figure \ref{decision-tree-depth-3} classifies that loop as parallelizible. Given that hint a programmer might check, if there are actually any states, preserved by \textit{timer\_read()} function from call to call, which might be distorted by the loop parallelization. This loop has \textit{iterator payload non-cf cohesion} equal to 0.0645, which correspond to parallelizible loops, according to results presented in the section \ref{analysis-single-metrics-vs-parallelizability}.              
+\begin{lstlisting}[caption={Loop, which has not been parallelized by Intel C/C++ compiler, but does seem algorithmically parallelizible, given absense of cross-iteration dependencies introduced by the function call. }, captionpos=b, label=lst:non-parallel-0, float,floatplacement=H]
+for (i = 1; i <= t_last; i++) {
+	trecs[i] = timer_read(i);
+}
+\end{lstlisting}\newline
+\null\qquad Another more elaborate case is presented in the listing \ref{lst:non-parallel-1}. Intel compiler failed to parallelize that loop nest, because it assumed that there is flow and anti dependencies between load from rhs[k][j][i][m] and store to rms[m]. But decision tree of depth 3 (see figure \ref{decision-tree-depth-3}) classifies that innermost loop as 65\% parallelizible and 35\% not, giving a programmer a little hope. Its classification could have been slightly better if there was not SCC inside the payload of the inner loop. Metric computing pass uses LLVM memory dependence analysis, which alike Intel compiler assumes dependencies between memory references to different arrays. Metric values for the innermost loop are: $\textit{iterator-payload non-cf cohesion}\approx 0.0357$, $\textit{iterator-payload total cohesion}\approx 0.3571$, $\textit{loop critical payload fraction}\approx 0.2963$.
+\begin{lstlisting}[caption={Loop, which has not been parallelized by Intel C/C++ compiler due to conservative anti and flow dependencies assumptions between references to rhs and rms. But these are different arrays and the loop actually computes reduction.}, captionpos=b, label=lst:non-parallel-1, float,floatplacement=H]
+for (k = 1; k <= grid_points[2]-2; k++) {
+	for (j = 1; j <= grid_points[1]-2; j++) {
+		for (i = 1; i <= grid_points[0]-2; i++) {
+			for (m = 0; m < 5; m++) {
+				add = rhs[k][j][i][m];
+				rms[m] = rms[m] + add*add;
+			} 
+		} 
+	} 
+}
+\end{lstlisting}\newline
+\null\qquad Assuming that a programmer accepted that metric hint, he decided to analyze and rewrite the loop with OpenMP pragmas (see figure \ref{lst:non-parallel-2}), since it it visible, that the loop computes reductions for all 5 rms array elements:\newline
+\begin{equation}
+rms\left[ m \right] = \sum\limits_{k \in grid\_points\left[ 2\right] -2}\sum\limits_{j \in grid\_points\left[ 1\right] -2}\sum\limits_{i \in grid\_points\left[ 0\right] -2} rhs\left[ k\right] \left[ j\right] \left[ i\right] \left[ m\right]
+\end{equation}
+\begin{lstlisting}[caption={Loop, which has not been parallelized by Intel C/C++ compiler, but does seem algorithmically parallelizible, given absense of cross-iteration dependencies introduced by the function call. }, captionpos=b, label=lst:non-parallel-2, float,floatplacement=H]
+#pragma omp for nowait
+for (k = 1; k <= grid_points[2]-2; k++) {
+	for (j = 1; j <= grid_points[1]-2; j++) {
+		for (i = 1; i <= grid_points[0]-2; i++) {
+			for (m = 0; m < 5; m++) {
+				add = rhs[k][j][i][m];
+				rms_local[m] = rms_local[m] + add*add;
+			} 
+		} 
+	} 
+} 
+for (m = 0; m < 5; m++) {
+#pragma omp atomic
+	rms[m] += rms_local[m];
+}
+\end{lstlisting}
+
+
+
 
 \subsection{The problem of proper SCCs number metric}
 \qquad The proper SCCs number metric was described in section \ref{metrics-loop-proper-sccs-number}. Despite the fact, that the metric seems to directly represent parallelisability inhibiting parts of the payload, figures in ... show that ICC compiler sometimes fails to parallelise loops even with 0 metric value. Listing \ref{lst:metrics-loop-example-2} below, gives such example.
 
-\begin{lstlisting}[caption={Non-parallelizible loop. Function call inside loop's body prevents ICC compiler from parallelizing it. Loop taken from EP NAS benchmark.}, captionpos=b, label=lst:metrics-loop-example-2, float,floatplacement=H]
-for (i = 0; i < MK + 1; i++) {
-	t2 = randlc(&t1, t1);
-}
-\end{lstlisting}
+
 
 \begin{figure}[htb]
 	\centering
@@ -142,15 +237,24 @@ for (i = 0; i < MK + 1; i++) {
 
 \section{Statistical analysis}
 \label{analysis-statistical-analysis}
-\qquad This section views loop parallelizability as a machine learning problem. Metrics represent features of loops. Intel C/C++ compiler gives an expert-opinion and labels (classifies) loops as parallelizible or not.
-   
-\qquad Statistical analysis of loop parallelisability metrics has been conducted with the help of pandas \cite{python-lib-pandas} and scikit-learn \cite{python-lib-scikit-learn} python packages. Detailed description of all algorithms, techniques and all underlying mathematical foundations can be found in the introduction to statistical analysis book \cite{statistical-learning-book}.
-
-\subsection{K-Means clustering}
-
-\qquad In this work k-means clustering techniques have been used as the first method of statistical analysis.
-
-
-
-
-\subsection{SVM-based parallelisability analyzer}
+\qquad Statistical learning techniques can be used to compare relative performance of software source code metrics in the task of parallelizability classification. This section views loop parallelizability as a machine learning problem. Metrics represent features of loops. Intel C/C++ compiler gives an expert-opinion and labels (classifies) loops as parallelizible or not. Three ML algorithms have been applied to the dataset presented in figure \ref{analysis-data-table}: Support Vector Machines (SVM), decision tree classifier, neural network based Multi-layer Perceptron (MLP). All machine learning metric set studies have been conducted with the help of pandas \cite{python-lib-pandas} and scikit-learn \cite{python-lib-scikit-learn} python packages. Detailed description of all algorithms, techniques and all underlying mathematical foundations can be found in the introduction to statistical analysis book \cite{statistical-learning-book}.\newline
+\null\qquad Table \ref{single-metric-ml-table-0} below presents results obtained for every single loop parallelizability metric out of proposed metric set (see section \ref{metrics-metric-groups}).
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/single-metric-ml-table-0.png}
+\caption{Average accuracies of parallelizability predictors. Each predictor has been trained with only one feature (table columns). Different machine learning techniques (SVN, Decision Tree, MPL) have been used for training. Percentages in the table represent mean accuracies. K-fold (K=15) cross validation technique has been used to partition samples from \ref{analysis-data-table} into training and testing sets. Different K numbers (5, 10, 20, 30) produce approximately the same mean accuracies (see figure \ref{single-metric-ml-table-1}).}
+\label{single-metric-ml-table-0}
+\end{figure}\newline 
+\null\qquad Every single metric has been used as a loop feature, to train different machine learning models to classify loops as parallelizible or not. Above table \ref{single-metric-ml-table-0} reports on accuracies of corresponding trained predictor models. In order to train every single model, the dataset \ref{analysis-data-table} has been partitioned into training and testing subsets. Partitioning has been done with K-fold method. This method splits all data samples into K equal subsets. Then it chooses one of these spilts as a testing set and uses all the rest as a training set. This process is repeated K times to cover all possible cases. Then K-fold partitioning might be applied again, but with different partitions. That application might be repeated N times. For the table \ref{single-metric-ml-table-0} above K=15, N=5. For every training and testing run predictors report accuracy. All these accuracies have been averaged to just one percentage, presented in the table \ref{single-metric-ml-table-0} above.\newline
+\null\qquad Exactly the same experiment (with K=15 and N=5) has been conducted with different sets of metrics used as features of predictor models. Table \ref{metric-set-ml-table-0} below shows collected results.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/metric-set-ml-table-0.png}
+\caption{Average accuracies of parallelizability predictors. Each predictor has been trained from sets of metrics. Results are presented in the same form as in table \ref{single-metric-ml-table-0} above. Full table, with all K values (5,10,15,20,30) is available in the figure \ref{metric-set-ml-table-1} in the appendix.}
+\label{metric-set-ml-table-0}
+\end{figure}\newline
+\null\qquad Results, presented in tables \ref{single-metric-ml-table-0} and \ref{metric-set-ml-table-0} do not change significantly with K and N variations. Corresponding tables \ref{single-metric-ml-table-1} and \ref{metric-set-ml-table-1} in the appendix show the whole sets of accuracies for K equal to 5, 10, 15, 20 and 30.\newline
+\null\qquad It is visible from the tables, that decision tree learning method works the best in both cases: for models with single loop metrics as featues, as well as for models with sets of metrics as features. For models with single metrics as features, decision tree makes predictions with accuracy around 65-70\%, with 71-72\% for two \textit{iterator payload cohesion} metrics. These metrics seem to work a bit better than others, what corerlates with conclusions made in section \ref{analysis-single-metrics-vs-parallelizability} of this chapter.\newline
+\null\qquad When we use sets of metrics as machine learning model features, accuracies these machine learning predictors can achieve are a bit higher. Decision tree based algorithm can achieve accuracy of 77\%. This learning algorithm works comparably for all sets. For the set in the first column of table \ref{metric-set-ml-table-0} (with all 13 metrics out of 5 groups used as features) decision tree works as good as for the set in the second column (just 4 most parallelizability correlating metrics). On the other hand, accuracies of SVN based model tend to be noticably higher for models with more metrics as features. Table \ref{metric-set-ml-table-0} shows, that when we add dependencies number metrics to feature sets we get increaced prediction accuracy. It might look weird in the light of absence of any correlations between dependencies number metrics and loop parallelizability, as was shown in the section \ref{analysis-single-metrics-vs-parallelizability}. \textit{Loop proportion} metrics combined with \textit{loop cohision} metrics tend to work much worse, than \textit{loop proportion} metrics combined with \textit{loop dependencies} number metrics. This result is also a bit surprising, because \textit{loop cohesion} metrics correlate with parallelizability better, that \textit{loop dependencies number} metrics.\newline
+\null\qquad Results of decision tree learning algorithm corelate better with the results presented in section \ref{analysis-single-metrics-vs-parallelizability} of this chapter, than SVN results. MPL accuracies do not seem to change with different feature sets at all.  
+          

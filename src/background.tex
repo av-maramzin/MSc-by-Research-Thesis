@@ -1,19 +1,17 @@
 \chapter{Background} \label{backgroud}
 \qquad This chapter of the thesis introduces a reader into the context of the work. First, sections \ref{background-software-metrics-in-cs} and \ref{background-metrics-parallel-computing} give a broad overview of various software source code metrics proposed in the general field of computer science and specifically in the subfield of parallel computing. None of these metrics can be directly used to judge about software source code parallelizability. For tackling that problem there is a need in development of new source code parallelizability metrics.\newline
-\null\qquad The field of parallel computing is a really old field, dating back to 1960s and there has been done a huge amount of work. Talking on the very high abstract level, the parallelization of a sequantial program is ultimately constrained by different sorts of dependencies, which exist between program instructions. By that time, there has been established a theory on program dependence analysis. This theory has been well absorbed into many commercial compilers and is being ubiquitously used everywhere in practice. The book \cite{optimizing-compilers-book} conducts a broad compilation of all major results in the field of parallelizing compilers and program dependence theory. Section \ref{background-modern-parallelisability-advisor-tools} briefly describes modern state-of-the-art parallelization tools with Intel's Parallel Studio \cite{intel-parallel-studio} as an example. Section \ref{background-dependence-theory} takes the main theory results from \cite{optimizing-compilers-book} and describes those, which are used in the current project.\newline
+\null\qquad The field of parallel computing is a really old field, dating back to 1960s and there has been done a huge amount of work. Talking on the very high abstract level, the parallelization of a sequential program is ultimately constrained by different sorts of dependencies, which exist between program instructions. By that time, there has been established a theory on program dependence analysis. This theory has been well absorbed into many commercial compilers and is being ubiquitously used everywhere in practice. The book \cite{optimizing-compilers-book} conducts a broad compilation of all major results in the field of parallelizing compilers and program dependence theory. Section \ref{background-modern-parallelisability-advisor-tools} briefly describes modern state-of-the-art parallelization tools with Intel's Parallel Studio \cite{intel-parallel-studio} as an example. Section \ref{background-dependence-theory} takes the main theory results from \cite{optimizing-compilers-book} and describes those, which are used in the current project.\newline
 \null\qquad This abundance of previous work makes it clear, that there is only one way along which software source code parallelizability metrics study can be conducted. Proposed metrics must use the results of well-established dependence theory. In particular, the whole MSc project work is based on the intermediate dependence-based program representation, namely Program Dependence Graph (PDG). This program dependence data structure has been proposed by in their work \cite{pdg-paper} and is briefly described in section \ref{background-program-dependence-graph}.\newline
 \null\qquad Once PDG of a program source code is built, some metrics can be computed straight away. Regular program consists out of modules, subroutines, blocks of code (such as if-statements, for-loops, etc.). As, according to many observations, loops represent 20\% of code, which is executed 80\% of time and are the most seducing piece of workload to parallelize by compiler, this MSc work computes parallelizability metrics on program loops.\newline
 \null\qquad The work on loop iterator recognition  and loop decoupling \cite{iterator-recognition-paper} is another foundation this MSc project is based on. Section \ref{background-loop-decoupling} describes the main results of this paper and introduces notions of loop iterator and payload. Metrics proposed and described in chapter \ref{metrics} almost completely rely onto these concepts. The tool, developed for this MSc project (see chapter \ref{ppar-tool}) implements algorithms described in \cite{iterator-recognition-paper} and also uses some graph theory results like strongly connected components (SCCs) finding algorithm and some results from compilers control flow analysis theory, which are briefly outlined in sections \ref{background-graph-theory} and \ref{background-control-flow-analysis}.
 
 \section{Software metrics in computer science} \label{background-software-metrics-in-cs}
-\qquad The idea of software source code metrics is definitely not a new one. Quantitative measurements lie as the essence of all exact sciences and there have been numerous efforts to introduce objective metrics in computer science as well. As of the moment computer science quantitative metrics have found their
-application mostly in the fields of software quality assessment, software products complexity and software development as a process. These metrics measure
+\qquad The idea of software source code metrics is definitely not a new one. Quantitative measurements lie as the essence of all exact sciences and there have been numerous efforts to introduce objective metrics in computer science as well. As of the moment, computer science quantitative metrics have found their application mostly in the fields of software quality assessment, software products complexity and software development as a process. These metrics measure
 properties of software products such as source code complexity, modularity,
 testability and ultimately maintainability. Combined with properties related to
 software development processes and projects, they are capable of delivering some
 estimates on the total amount of development efforts and associated monetary costs at the end.\newline 
-\null\qquad The body of research in this relatively new field is very vast. There are a lot of publications on different types of metrics as well as on their evaluation criteria, axioms the metrics must conform to, their validation, applicability, etc. There has been some efforts to conduct a survey of the field and present an overview of the most important and widespread software metrics to date ([1],[2],[3] to name a few). Work [2] distinguishes two major eras in the field: before 1991, where the main focus was on metrics based on the complexity of the code; and after 1992, where the main focus was on metrics based on the concepts of Object Oriented (OO) systems (design and implementation). Earlier Fabrizio Riguzzi's work [1] dated as 1996 resembles
-[2], but also adds some critical insight. Jitender Kumar Chhabra and Varun Gupta in their paper [3] conduct an overview of dynamic software metrics. The later shows that software metrics have gone further from the field of static analysis and moved on to dynamic properties of the software.
+\null\qquad The body of research in this field is very vast. There are a lot of publications on different types of metrics as well as on their evaluation criteria, axioms metrics must conform to, their validation, applicability, etc. There has been some efforts to conduct a survey of the field and present an overview of the most important and widespread software metrics to date (\cite{metrics-survey-0-paper}, \cite{metrics-survey-1-paper}, \cite{metrics-survey-dynamic-paper} to name a few). Work \cite{metrics-survey-1-paper} distinguishes two major eras in the field: before 1991, where the main focus was on metrics based on the complexity of the code; and after 1992, where the main focus was on metrics based on the concepts of Object Oriented (OO) systems (design and implementation). Earlier Fabrizio Riguzzi's work \cite{metrics-survey-0-paper} dated as 1996 resembles \cite{metrics-survey-1-paper}, but also adds some critical insight. Jitender Kumar Chhabra and Varun Gupta in their paper \cite{metrics-survey-dynamic-paper} conduct an overview of dynamic software metrics. The later shows that software metrics have gone further from the field of static analysis and moved on to dynamic properties of the software.
 
 \subsection{Source lines of code (SLOC) / lines of code (LOC)}
 \label{background-source-lines-of-code}
@@ -33,17 +31,25 @@ estimates on the total amount of development efforts and associated monetary cos
 system parts (obsolete, malfunctioning, etc.) can be replaced without affecting the rest of the system.
 
 \subsection{Function points}
-\qquad Function point is a “unit of measurement” that is used in order to represent the amount of business functionality present in the piece of software. During functional requirements phase of software development, required functionality is identified. Every function is categorized into one of the following types: output, input, inquiry, internal files and external interfaces. Every function is given some amount of function points, which is based on the experience of the past projects. Function Points were proposed by Allan Albrecht in 1979 [7]. Albrecht observed in his research that Function Points were highly correlated to SLOC (3.1) metric.
+\label{background-function-points}
+\qquad Function point is a “unit of measurement” that is used in order to represent the amount of business functionality present in the piece of software. During functional requirements phase of software development, required functionality is identified. Every function is categorized into one of the following types: output, input, inquiry, internal files and external interfaces. Every function is given some amount of function points, which is based on the experience of the past projects. Function Points were proposed by Allan Albrecht in 1979 \cite{function-points-paper}. Albrecht observed in his research that Function Points were highly correlated to SLOC (3.1) metric.
 
 \subsection{Object-Oriented software metrics}
-\qquad In the work [8] Chidamber and Kemerer define a suite of metrics for object oriented designs. They define software metrics for several software properties like cohesion, coupling and complexity. Some examples are presented below:
-- Lack of Cohesion in Methods (LCOM): LCOM = (P > Q) ? P – Q : 0, where P
-and Q are the numbers of pairs of class methods that do not use / use common class member variables correspondingly.
-- Coupling Between Object Classes (CBO): for a class CBO equals to the number
-of other classes to which it is coupled. If methods of a class invoke methods or work with member variables of the other class, then classes are coupled.
+\label{background-object-oriented-metrics}
+\qquad In the work \cite{metrics-object-oriented-paper} Chidamber and Kemerer define a suite of metrics for object oriented designs. They define software metrics for several software properties like cohesion, coupling and complexity. Some examples are presented below:
+\begin{description}[align=left,leftmargin=*]
+\item\textit{Lack of Cohesion in Methods (LCOM)}:\newline
+LCOM = (P \textgreater Q) ? P $-$ Q : 0, where P and Q are the numbers of pairs of class methods that do not use / use common class member variables correspondingly. 
+\item\textit{Coupling Between Object Classes (CBO)}:\newline
+For a class CBO equals to the number of other classes to which it is coupled. If methods of a class invoke methods or work with member variables of the other class, then classes are coupled.     
+\end{description} 
 
 \subsection{Security metrics for source code structures}
-\qquad Software metrics have found their application in the field of source code security as well. Work [9] gives some examples. Described metrics can be used at different stages of software development. Function points (3.5) can be used at initial stages of functional requirements specification. Software cohesion and coupling concepts (3.4) can be considered during later stages of high-level design specification (particular object-oriented software metrics (3.6)). Cyclomatic complexity (3.2), SLOC (3.1), Halstead's complexity measures (3.3) can be used during final and implementation stages for guiding coding efforts. All these metrics give assessments and predictions related to software quality, maintenance, testability, etc. Despite the possibility of correlations between some of these metrics and application parallelisability, these are not designed to directly judge about it.
+\label{background-security-metrics}
+\qquad Software metrics have found their application in the field of source code security as well. Work \cite{metrics-security-paper} gives some examples.
+
+\subsection{Wrap-up}
+\qquad Described metrics can be used at different stages of software development. Function points \ref{background-function-points} can be used at initial stages of functional requirements specification. Software cohesion and coupling concepts \ref{background-cohesion-and-coupling} can be considered during later stages of high-level design specification (particular object-oriented software metrics \ref{background-object-oriented-metrics}). Cyclomatic complexity \ref{background-cyclomatic-complexity}, SLOC \ref{background-source-lines-of-code}, Halstead's complexity measures \ref{background-halsteads-measures} can be used during final and implementation stages for guiding coding efforts. All these metrics give assessments and predictions related to software quality, maintenance, testability, etc. Despite the possibility of correlations between some of these metrics and application parallelizability, these metrics are not designed to directly judge about it.
 
 \section{Metrics in the area of parallel computing}
 \label{background-metrics-parallel-computing}
@@ -66,36 +72,60 @@ there is a diversity in definitions of parallel and serial execution times.
 
 \end{enumerate} 
 \qquad All these enumerated speedup variants can be futher combined or modified to produce a numerous parallel performance metrics. While these metrics can be used to estimate the final speedup a parallel version of a program is going to have on the certain hardware system, they cannot be used for software source code parallelisability feedback and algorithmic parallelizability analysis. In other words, these metrics are not applicable to the problem being tackled in this MSc project.  
-
-\section{Modern parallelisability advisor tools}
-\label{background-modern-parallelisability-advisor-tools}
-\subsection{Intel(R) Parallel Studio XE 2018}
-\qquad Whithin the current project boundaries the tool is used in conjunction with Intel(R) Parallel Studio XE 2018 \cite{intel-parallel-studio}. Intel Parallel Studio XE is a software development product developed by Intel. Parallel Studio is composed of several component parts, each of which is a collection of capabilities. 
-
-These tools help developers boost application performance through superior optimizations and Single Instruction Multiple Data (SIMD) vectorization, integration with Intel® Performance Libraries, and by leveraging the latest OpenMP* 5.0 parallel programming models.
-
-Enhanced optimization reports and integration with Intel® VTune™ Amplifier and Intel® Advisor give developers control over code profiles.
-
-For better performance, it is optimized to take advantage of advanced processor features like multiple cores and wider vector registers, including Intel® Advanced Vector Extensions 512 (Intel® AVX-512) instructions. 
-
-Intel® C++ Compiler in Intel® Parallel Studio XE
-
-\subsection{Automatic parallelisation with Intel(R) C/C++ compilers (ICC)}
-\qquad Parallelizing application for the sake of performance improvement can be a time-consuming and skill-requiring activity. For applications, containing relatively simple loops and targeting x86 platforms this task can be automated with the help of Intel C++ compiler \cite{intel-multithreading-guide}. With automatic parallelization ICC detects loops that can be safely and efficiently parallelized and generates multithreaded code. It relieves the programmer from searching for loops that are good candidates for parallel execution, performing dependence analysis and adding parallel compiler directives manually. \newline \null\qquad When it comes to automatic program parallelisation, Intel C/C++ compilers are apparently limited to certain types of loops. \newline \null\qquad Along with actual parallelization Intel C/C++ compilers provide developers with a comprehensive parallelisation reports. \newline \null\qquad Intel C/C++ compiler is used withing the scope and timeframe of the current MSc project as loop parallelisation expert. It's parallelisability reports are transformed into the following format, shown in figure below. That data is used for later statistical learning analysis as labels and parallelisability classifications for different loops of NAS benchmarks (see chapter \ref{benchmarks}).      
    
+\section{Dependence theory} 
+\label{background-dependence-theory}
+\qquad The ultimate task of compiler is to translate a program from a high-level human-oriented language to the code, designed to run on some certain machine. Apart from functional correctness, the code produced by compiler must be effective. In the modern computer science world effectiveness mostly determines, whether a language is going to be used. Hence, compilers spend a bulk of their work and time on optimization.\newline
+\null\qquad Despite the fact, that parallel programming research has been around for many decades, the primary focus of compiler optimizations used to be on scalar machines. But, relatively recent switch to multi-core architectures for general purpose CPUs, which happened around 2006 increased the need for compiler parallelizing optimizations.\newline
+\null\qquad The primary focus of modern day compiler research is program parallelization. Modern optimizing and parallelizing compilers use dependence-based approaches to the analyses and transformations they do. Data dependence has been explored since the early days of compilers, dating back to the 1960s, and by now there exist a vast body or research and theory in the domain. The main results and outlines can be found in the optimizing compilers for modern architectures book \cite{optimizing-compilers-book}. This section cites the main notions and principles in the field of program dependence analysis.
 
-\section{Dependence theory} \label{background-dependence-theory}
-\qquad Modern optimizing and parallelizing compilers use dependence-based approaches to the analyses and transformations they do. Data dependence has been explored since the early days of compilers, dating back to the 1960s, and by now there exist a vast body or research and theory in the domain. The main results and outlines can be found in the optimizing compilers for modern architectures book \cite{optimizing-compilers-book}. Here the brief descriptions fo notions are provided.  
-\subsection{Types of dependencies} \label{background-dependence}
-\qquad Generally speaking, a dependence is anything that introduces execution order constraints on statements or instructions of the sequential program. Statement S2 is dependent on statement S1, if statement S1 must be executed before statement S2. Dependencies may be broadly classified into two different categories: data and control dependencies. If statement S2 consumes the data, produced by S1, then this type of dependence is called data dependence. If whether S2 will be executed or not depends on the outcome of computation done in S1, then the statement S2 is control-dependent on statement S1. \newline  
-\null\qquad Data dependencies are futher subdivided into four subcategories.
+\subsection{Dependence intuition} 
+\label{background-dependence-intuition}
+\qquad The primary requirement for optimizing and parallelizing compilers is that compiler analyses and sunsequent program transformations must not change the semantic (functional correctness) of the original sequential program. In other words, sequential program specifies a set of constraints called dependencies.\newline
+\null\qquad Dependence is a binary relation on the set of program statements. The pair $\left\langle S_{1},S_{2}\right\rangle $ is in relation if $S_{2}$ must be executed after $S_{1}$. Generally speaking, a dependence is anything that introduces execution order constraints on statements or instructions of the sequential program.\newline
+\null\qquad Let's consider the following straight-line pseudocode fragment, which computes the area of a circle and is written in imperative programming style:\newline
+$S_{1}\quad\pi=3.14159$\newline
+$S_{2}\quad R=5$\newline
+$S_{3}\quad S=\pi\cdot R^{2}$\newline
+\null\qquad Here programmer specified the order, these statements should be executed in. And the correct functional result of this code fragment is obtained by executing these statements in the originally specified order $S_{1}$, $S_{2}$, $S_{3}$. While both statements $S_{1}$ and $S_{2}$ must precede statement $S_{3}$ for getting correct circle area, nothing prohibits execution of $S_{2}$ before $S_{1}$. In other words, sequential imperative programming languages introduce extra execution order constraints, which do not really need to be precisely followed.\newline
+\null\qquad Hence, the job of parallelizing compiler is to figure out the minimal set of critical constraints, which preserve the functional correctness of the program. There isn't really that much to gain in this little straight-line code fragment from its parallelization. Moreover, modern hardware does it implicitly to a programmer with pipelining \cite{patterson-and-hennessy-cod} and out-of-order execution techniques \cite{patterson-and-hennessy-quantitative-approach}. The major source of parallelism is concentrated withing loops and other structures of repeated computation.   
+\subsection{Types of dependencies} 
+\label{background-dependence-types}
+\qquad The topmost classification in the hierarchy of dependence types is data and control dependencies. Code fragment from the section \ref{background-dependence-intuition} illustrates data dependencies between statement $S_{3}$ and statements $S_{1}$ and $S_{2}$. Statement $S_{3}$ is awaiting for the data from statements $S_{1}$ and $S_{2}$, and cannot proceed to its execution until it gets it.\newline
+\null\qquad Let's consider the other type of dependencies - control dependencies. In the code fragment presented in the listing \ref{lst:control-dependence} statement $S_{2}$ is control-dependent on the statement $S_{1}$ and cannot be evalueated until we check the condition in the if statement. If we reschedule $S_{2}$ computation to happen before $S_{1}$, then we are risking of getting a zero-division exception, which does not occur in the original sequential code.\newline
+\begin{lstlisting}[caption={Code illustrating the notion of control dependence. Statement $S_{2}$ is control-dependent on the statement $S_{1}$.}, captionpos=b, label=lst:control-dependence, float, floatplacement=H, mathescape=true]
+$S_{1}$ if (a!=0)
+$S_{2}$	c = b/a;
+\end{lstlisting}
+\null\qquad Classification of data dependencies can be extended further. No matter how complex programming language statement or structure is (loop, conditional statement, etc.), no matter what the exact source code form of the loop is (while-do, do-until, for-range loops), at the very end everything boils down to the order of memory acceses (reads and writes - loads and stores) to the same memory locations. That consideration leads to so-called \textit{load-store classification}.
 
-\begin{description}
-\item [Read After Write (RAW) dependencies]  
-\item [Write After Read (WAR) dependencies]    
-\item [Write After Write (WAW) dependencies] 
-\item [Read After Read (RAR) dependencies] 
+\begin{description}[align=left,leftmargin=*]
+\item \textbf{Read After Write (RAW) dependencies}\newline
+\null\qquad This type of dependence (also frequently called \textit{true dependence} or \textit{flow dependence}) arises, when a first statement $S_{1}$ stores into location, that is later read by a second statement $S_{2}$:\newline
+$S_{1}\quad X = ... $\newline
+$S_{2}\quad ... = X$\newline
+\null\qquad This dependence ensures that $S_{2}$ receives the data, produced by $S_{1}$, and is conventionally depicted as an edge flowing from a first statement (\textit{source}) to a second (\textit{sink}).   
+  
+\item \textbf{Write After Read (WAR) dependencies]}\newline
+\null\qquad This type of dependence (also frequently refered to as \textit{anti dependence} or \textit{false dependence}) arises, when a first statement $S_{1}$ reads from a location, which is being overwritten by a second statement $S_{2}$ later in a program:\newline
+$S_{1}\quad ... = X$\newline
+$S_{2}\quad X = ... $\newline
+\null\qquad This dependence is called false, since it is usually easily eliminated by renaming (whether by software, or by hardware means). The point of dependence is if we execute $S_{2}$ before $S_{1}$, then $S_{1}$ might load a wrong value at the end.
+     
+\item \textbf{Write After Write (WAW) dependencies}\newline
+\null\qquad This type of dependence (also frequently refered to as \textit{output dependence}) arises, when a first $S_{1}$ and second $S_{2}$ statements write to exactly the same location:\newline
+$S_{1}\quad X = ... $\newline
+$S_{2}\quad X = ... $\newline
+\null\qquad If we change the order of statements, then after their execution location X is going to stay with the value computed by $S_{1}$, when it has to stay with the values of $S_{2}$.
+ 
+\item \textbf{Read After Read (RAR) dependencies}\newline
+\null\qquad These are not usually classified as dependencies at all, and can be freely reodered and rescheduled.
 \end{description}
+\qquad Basically, these dependence types represent different scenarios, how a dependence can actually arise in a program.
+
+\subsection{Dependence in loop nests}   
+\label{background-dependence-loop-nests}
+
 
 \section{Graph theory} \label{background-graph-theory}
 \qquad The work uses some results from the graph theory. In particular, the depth-first search (DFS) graph traversal algorithm and its application to find strongly connected components (SCCs) of graphs. While there are a certain number of variations of these two basic algorithms, the work uses them in the exact form as described in the introduction to algorithms book \cite{introduction-to-algorithms-book}.
@@ -111,16 +141,62 @@ graph. An undesirable property of a control flow graph, however, is a fixed
 sequencing of operations that need not hold. The program dependence graph
 explicitly represents both the essential data relationships, as present in the data dependence graph, and the essential control relationships, without the unnecessary sequencing present in the control flow graph.’ These dependence relationships determine the necessary sequencing between operations, exposing potential parallelism. 
 
-
-
-
 \subsection{Data dependence graph (DDG)} \label{background-ddg}
 \subsection{Memory dependence graph (MDG)} \label{background-mdg}
 \subsection{Control dependence graph (CDG)} \label{background-cdg}
 \subsection{Program dependence graph (PDG)} \label{background-pdg}
 
 \section{Loop iterator recognition and loop decoupling} \label{background-loop-decoupling}
-\qquad Logically the code, constituting a loop can be divided into two parts. The first part is an actual workload (payload) to be repeated multiple times. The other part is loop iterator the code to control the repetition of the workload.    
+\qquad Logically the code, constituting a loop can be divided into two parts. The first part is an actual workload (payload) to be repeated multiple times. The other part is a loop iterator.\newline
+\null\qquad Different definitions have been proposed for loop iterators. For example, in the polyhedral model underpinning many loop transformations each loop iteration within loop nest is modelled as a lattice point inside a polytope describing the loop iteration space. A loop iterator is then an enumerator for point vector with integer valued components with bounds representing the faces of the loop limiting polytope.\newline
+\null\qquad In comparison, in object-oriented programming iterators are class objects, which enable a programmer to traverse a container data structure, e.g. a list. These objects provide a syntax, which abstracts away all container traversal details. Specifically, the next element of a container can be reached by \textit{iterator++} operator. Internal implementation of this operator can be arbitrarily complex.\newline
+\null\qquad The work, published in paper \cite{iterator-recognition-paper} introduces a new and more general loop iterator definition. Loop iterator is defined on the higher algorithmic graph theory level and works better on practice. As work \cite{iterator-recognition-paper} showed, this iterator definition enables compiler analyses to recognize even iterators of non-affine loops, which escape traditional compiler analyses.
+\subsection{Generalized loop iterator definition}
+\qquad As described in the paper \cite{iterator-recognition-paper}, intuitively, a loop iterator is a variable (or a set of variables),
+which is updated in every iteration of a loop and is involved in controlling loop exits, e.g. as part of a conditional expression.\newline
 
-\cite{iterator-recognition-paper}
+\textbf{Definition 3.1. Generalized Loop Iterator.} A generalized loop iterator is a minimal set of variables and operations manipulating these variables, which form a Strongly Connected Component (SCC) in the Program Dependence Graph (PDG) and exhibit a loop-carried dependence of distance 1. Furthermore, this SCC has no incoming edges from other SCCs in the PDG.\newline
 
+Conditional expressions controlling loop exits introduce control dependences to every operation contained in the loop body. 
+
+Since we are also interested in variables, which are updated in every loop
+iteration, we are looking for data dependences in the other direction, i.e. from update operations in the loop body towards read operations in loop termination expressions. Together these dependences will form a loop-carried dependence cycle or, more generally, a SCC in the PDG. Other operations may depend on this SCC, but it is the dominant SCC of operations, which does not depend on any other operations and variables that determines loop termination and thus constitutes the loop iterator.
+
+\subsection{Loop decoupling and iterator recognition analysis}
+Static Analysis
+Our analysis for determining loop iterators involves three
+stages closely following Definition 3.1:
+1. PDG construction. We assume the IR provides us with
+a Control Flow Graph (CFG) in Static Single Assignment
+(SSA) form (Figure 5a). We apply the algorithm from [11] to
+construct the Control Dependence Graph (CDG) of the loop.
+Additionally, we combine the implicit def-use chain present
+in the intermediate representation with a static dependence
+analysis of memory accesses based on [19] to build the Data
+Dependence Graph (DDG) of the loop. We produce the PDG
+by combining the CDG and DDG (Figure 5b).
+2. Determine SCCs. Once we have the program depen-
+dence graph of a loop, we determine its strongly connected
+components. We build a directed acyclic graph (DAG) con-
+necting the SCCs using Kosaraju’s algorithm [2].
+3. Dominant SCC and iterator recognition. Finally, we
+take the dominant SCC, i.e. the one that has no incoming
+edges in the SCC DAG. This dominant SCC represents the
+loop iterator and we label instructions represented by the
+SCC as “iterator instructions” and variables involved as “it-
+erator variables” (Figure 5c). Inspection of the properties of
+these iterator instructions and variables reveals that together
+they satisfy Definition 3.1 by construction, showing that we
+have indeed recognized the loop iterator.
+
+
+\section{Modern parallelisability advisor tools}
+\label{background-modern-parallelisability-advisor-tools}
+\qquad Probably, the state-of-the-art in the area of parallel programming support and assistance in different program performance optimizations and tunings is represented by Intel(R) Parallel Studio XE 2018 \cite{intel-parallel-studio}.\newline
+\null\qquad Intel Parallel Studio XE is a software development product developed by Intel. Parallel Studio is composed of several component parts, each of which is a collection of capabilities. These tools help developers boost application performance through superior optimizations and Single Instruction Multiple Data (SIMD) vectorization, integration with Intel® Performance Libraries, and by leveraging the latest OpenMP* 5.0 parallel programming models. Enhanced optimization reports and integration with Intel® VTune™ Amplifier and Intel® Advisor give developers control over code profiles. For better performance, it is optimized to take advantage of advanced processor features like multiple cores and wider vector registers, including Intel® Advanced Vector Extensions 512 (Intel® AVX-512) instructions.\newline
+\null\qquad To really get a program into a tuned shape, suitable for execution on a specific hardware platform, software developer has to be quite knowledgable and experienced not only in the field of parallel programming and computer architecture, but also with these particular complex tools as well.\newline
+\null\qquad Intel C/C++ compiler \cite{intel-multithreading-guide} out of Intel Parallel Studio XE tool suite has been used in this project to compile NAS benchmarks and provide some feedback about parallelizability of benchmark loops. ICC compiler was used instead of a parallelizability expert (withing the scope and timeframe of the MSc project), to classify (label) NAS benchmark loops as parallelizible or not for the machine learning part of metrics analysis \ref{analysis-statistical-analysis}.  
+
+\subsection{Automatic parallelisation with Intel(R) C/C++ compilers (ICC)}
+\qquad Parallelizing application for the sake of performance improvement can be a time-consuming and skill-requiring activity. For applications, containing relatively simple loops and targeting x86 platforms this task can be automated with the help of Intel C++ compiler \cite{intel-multithreading-guide}. With automatic parallelization ICC detects loops that can be safely and efficiently parallelized and generates multithreaded code. It relieves the programmer from searching for loops that are good candidates for parallel execution, performing dependence analysis and adding parallel compiler directives manually.\newline 
+\null\qquad When it comes to automatic program parallelisation, Intel C/C++ compilers are apparently limited to certain types of loops. \newline \null\qquad Along with actual parallelization Intel C/C++ compilers provide developers with a parallelisation reports. Unfortunately, these reports have a binary nature and give "yes"/"no" answers, when it comes to parallelizability questions. Moreover, since compiler has to be conservative, when it comes to optimizations in-order to preserve functional semantic of original program, sometimes these reports might be inaccurate or misleading. Let's consider some loops from NAS benchmarks.\newline

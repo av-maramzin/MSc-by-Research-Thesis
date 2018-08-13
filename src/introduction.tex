@@ -1,11 +1,6 @@
-
 \chapter{Introduction}
-
-\qquad Parallelism pervades the modern computing world. In the past parallel
-computations used to be employed only in high performance scientific systems, but
-now the situation has changed. Parallel elements present in the design of almost all modern computers from small embedded processors to large-scale supercomputers
-and computing networks. Unfortunately, these immense parallel computing resources
-are not always fully utilized during computations due to several problems in the field: 
+\label{introduction}
+\qquad Parallelism pervades the modern computing world. In the past parallel computations used to be employed only in high performance scientific systems, but now the situation has changed. Parallel elements present in the design of almost all modern computers from small embedded processors to large-scale supercomputers and computing networks. Unfortunately, these immense parallel computing resources are not always fully utilized during computations due to several problems in the field: 
 
 1. Abundance of legacy applications from previous sequential computing era. That abundance is one source of problems. Legacy applications are not designed to run on parallel machines and, by default, do not take advantage of all underlying resources. Automatic parallelisation techniques have been developed to transform these sequential applications into parallel ones. However, these techniques cannot efficiently deal with some codes in the spectrum of existent applications. Pointer-based applications with irregular data structures, applications with loop carried dependencies and entangled control flow have proven to be challenging to automatic parallelisation. Very often such programs hide significant amounts of parallelism behind suboptimal implementation constructs and represent meaningful potential for further improvements. 
 

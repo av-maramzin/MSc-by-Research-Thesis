@@ -23,3 +23,25 @@
 	\caption{\textit{Critical payload anti dependencies number} metric on the left and \textit{payload anti dependencies number} metric on the right. Red and green dots represent loops, which have not/have been parallelized by ICC compiler correspondingly.}
 	\label{loop-dependencies-number-2}
 \end{figure}
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\linewidth]{figs/single-metric-ml-table-1.png}
+	\caption{Application of machine learning (ML) techniques (table rows) to different single loop metrics (table columns). Table is populated with average accuracies of these ML methods on the chosen metric for different k-fold cross-validation parameters (5, 10, 15, 20, 30). Every single percentage number has been calculated as the mean of a set of ML classifier runs. }
+	\label{single-metric-ml-table-1}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/metric-set-ml-table-1.png}
+\caption{Application of machine learning (ML) techniques (table rows) to different single loop metrics (table columns). Table is populated with average accuracies of these ML methods on the chosen metric for different k-fold cross-validation parameters (5, 10, 15, 20, 30). Every single percentage number has been calculated as the mean of a set of ML classifier runs. }
+\label{metric-set-ml-table-1}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/decision-tree-depth-5.pdf}
+\caption{Dataset \ref{analysis-data-table} decision tree, limited to the depth of 5.}
+\label{decision-tree-depth-5}
+\end{figure}
+
