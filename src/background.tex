@@ -200,3 +200,11 @@ have indeed recognized the loop iterator.
 \subsection{Automatic parallelisation with Intel(R) C/C++ compilers (ICC)}
 \qquad Parallelizing application for the sake of performance improvement can be a time-consuming and skill-requiring activity. For applications, containing relatively simple loops and targeting x86 platforms this task can be automated with the help of Intel C++ compiler \cite{intel-multithreading-guide}. With automatic parallelization ICC detects loops that can be safely and efficiently parallelized and generates multithreaded code. It relieves the programmer from searching for loops that are good candidates for parallel execution, performing dependence analysis and adding parallel compiler directives manually.\newline 
 \null\qquad When it comes to automatic program parallelisation, Intel C/C++ compilers are apparently limited to certain types of loops. \newline \null\qquad Along with actual parallelization Intel C/C++ compilers provide developers with a parallelisation reports. Unfortunately, these reports have a binary nature and give "yes"/"no" answers, when it comes to parallelizability questions. Moreover, since compiler has to be conservative, when it comes to optimizations in-order to preserve functional semantic of original program, sometimes these reports might be inaccurate or misleading. Let's consider some loops from NAS benchmarks.\newline
+\begin{lstlisting}[caption={Code illustrating the notion of control dependence. Statement $S_{2}$ is control-dependent on the statement $S_{1}$.}, captionpos=b, label=lst:icc-fault-0, float, floatplacement=H, mathescape=true]
+for (k = 0; k < n; k++) {
+	for (j = 0; j < vlen; j++) {
+		x[k][j] = scr[k][j];
+	}
+}
+\end{lstlisting}
+\qquad Figure \ref{lst:icc-fault-0}
