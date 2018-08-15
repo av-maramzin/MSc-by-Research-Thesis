@@ -23,38 +23,59 @@
 
 \subsection{Dependence-based approach to metrics computation}
 \label{metrics-dependence-based-approach}
-\qquad Compiler parallelisation of program statements is basically hindered by the execution-order constraints imposed on those statements, which, in turn, are defined by different sorts of program dependencies, which were described in the section \ref{background-dependence-theory} of the thesis. That consideration makes it clear, that in order to be credible software parallelizability metrics must be based on loop dependence properties and constraints. Program Dependence Graph (PDG) represents an intermediate representation of the program, which reflects all types of dependencies present in the program. 
+\qquad Compiler parallelisation of program statements is basically hindered by the execution-order constraints imposed on those statements, which, in turn, are defined by different sorts of program dependencies, which were described in the section \ref{background-dependence-theory} of the thesis. That consideration makes it clear, that in order to be credible software parallelizability metrics must be based on loop dependence properties and constraints. Program Dependence Graph (PDG) (see \ref{background-program-dependence-graph}) represents an intermediate representation of the program, which reflects all types of dependencies present in the program. 
 
 \section{Metrics use}
 \label{metrics-use}
-\qquad The main goal of software parallelizability metrics is to provide a developer with additional feedback regarding loop parallelizability, which could extend binary "yes"/"no" answers of modern parallelizing compilers (see section \ref{background-modern-parallelisability-advisor-tools}) by providing some quantitative measures of loop algorithmic parallelizability. Not only compiler answers have a binary nature, as it is shown in the section \ref{background-modern-parallelisability-advisor-tools}, sometimes Intel compiler has to be over-conservative and assumes presence of dependencies, where they do not actually exist. Such feedback might be misleading for inexperienced parallel software developer.\newline   
-\null\qquad Ideally, metrics should provide a quantitative measure of loop's algorithmic parallelizability (say, this loop is 80\% parallelizible) and where compiler has to be over-conservative due to functional semantic requirements, feedback metrics do not have any constraints.
-
-\begin{lstlisting}[caption={Example of 100\% parallelizible loop. Intel compiler successfully parallelizes it.}, captionpos=b, label=lst:metrics-loop-motivation-0]
+\qquad The main goal of software parallelizability metrics is to provide a developer with additional feedback regarding loop parallelizability, which could extend binary "yes"/"no" answers of modern parallelizing compilers (see section \ref{background-modern-parallelisability-advisor-tools}) by providing some quantitative measures of loop algorithmic parallelizability. Not only compiler answers have a binary nature, as it is shown in the sections \ref{background-modern-parallelisability-advisor-tools} and \ref{analysis-manual-analysis}, sometimes Intel compiler has to be over-conservative and assumes presence of dependencies, where they do not actually exist. Such feedback might be misleading for inexperienced parallel software developer.\newline   
+\null\qquad Ideally, metrics should provide a quantitative measure of loop's algorithmic parallelizability (say, this loop is 80\% parallelizible), and where compiler has to be over-conservative due to functional semantic requirements, feedback metrics do not have any constraints.\newline
+\null\qquad Let's consider several little hand-written examples.  
+\begin{lstlisting}[caption={Example of parallelizible loop. Intel compiler successfully parallelizes it.}, captionpos=b, label=lst:metrics-loop-motivation-0]
 for (unsigned int i = 0; i < size; i++) {
 	c[i] = a[i] + b[i];
 }
 \end{lstlisting}
-
-
-\begin{lstlisting}[caption={Loop with true cross iteration dependency. Intel compiler detects dependency and refuses to parallelize the loop.}, captionpos=b, label=lst:metrics-loop-motivation-1]
+\begin{lstlisting}[caption={Loop with true and anti cross iteration dependencies. Intel compiler detects dependency and refuses to parallelize the loop.}, captionpos=b, label=lst:metrics-loop-motivation-1]
 for (unsigned int i = 1; i < 100; i++) {
 	a[i] = a[i-1];
 }
 \end{lstlisting}
-
-\begin{lstlisting}[caption={Algorithmic reduction, hidden behind unsuccessful data structure choice (linked-list). If linear array was used instead, the loop would be parallelized by Intel compiler.}, captionpos=b, label=lst:metrics-loop-motivation-2]
+\null\qquad Listings \ref{lst:metrics-loop-motivation-0} and \ref{lst:metrics-loop-motivation-1} demonstrate two loops. While loop in listing \ref{lst:metrics-loop-motivation-0} is parallelizible, loop in listing \ref{lst:metrics-loop-motivation-1} is not. PPar tool (see \ref{ppar-tool}) is going to compute the following metric numbers for these loops.\newline
+\null\qquad Loop in listing \ref{lst:metrics-loop-motivation-0}: \textit{loop-absolute-size}: 21, \textit{loop-payload-fraction}: 0.5714, \textit{loop-proper-sccs-number}: 0, \textit{loop-critical-payload-fraction}: 0.0000,
+\textit{iterator-payload-total-cohesion}: 0.3191,
+\textit{iterator-payload-non-cf-cohesion}: 0.0638.\newline 
+\null\qquad Loop in listing \ref{lst:metrics-loop-motivation-1}: \textit{loop-absolute-size}: 17, \textit{loop-payload-fraction}: 0.5294, \textit{loop-proper-sccs-number}: 1, \textit{loop-critical-payload-fraction}: 0.2222,
+\textit{iterator-payload-total-cohesion}: 0.2821,
+\textit{iterator-payload-non-cf-cohesion}: 0.0513.\newline
+\null\qquad As will be shown in the section \ref{analysis-data-interpretation-and-visualization}, metrics \textit{loop-payload-fraction}, \textit{loop-critical-payload-fraction}, \textit{iterator-payload-total-cohesion}, \textit{iterator-payload-non-cf-cohesion} correlate with loop parallelizability property the most. Metrics \textit{loop-proper-sccs-number} and \textit{loop-critical-payload-fraction} represent the critical part of the loop payload. The bigger that part and correspondingly these metrics, the harder that loop is to parallelize. Figure \ref{metrics-use-pdg-0} shows visualization of PDG for loop in listing \ref{lst:metrics-loop-motivation-1}. It is visible, that this loop has two SCCs. One for iterator (with no incoming dependencies) and the other one is for critical payload. Critical SCC contains back edge, which forms a cycle and thus SCC. This cycle represents actual dependencies between load \textit{a[i-1]} and store \textit{a[i]} in the payload, which hinder loop parallelization.\newline
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{figs/metrics-use-pdg-0.pdf}
+\caption{PDG of loop in listing \ref{lst:metrics-loop-motivation-0}. Graph contains two SCCs: one for iterator and one for critical payload part.}
+\label{metrics-use-pdg-0}
+\end{figure}
+\null\qquad While loop iterator-payload cohesion metrics do not have that apparent intuition, as section \ref{analysis-data-interpretation-and-visualization} shows, they also tend to correlate with parallelizability. The bigger their values, the better the chances of loop parallelization. There are different special cases, but these two loops prove such relations between metric values and loop parallelizability.\newline
+\null\qquad Let's consider another example. Loop in listing \ref{lst:metrics-loop-motivation-2} represents a loop, which performs reduction. This algorithm is parallelizible by its nature, but a programmer hid all that parallelism behind unsuccessful data structure choice (linked list). While loop in listing \ref{lst:metrics-loop-motivation-1} can be parallelized with additional memory buffer (probably cyclic shift instructions won't help because the memory area to shift might be a way larger than a processor register), loop in listing \ref{lst:metrics-loop-motivation-2} is chasing pointer and nothing can help to that code version. So, ideally, metric values for loop \ref{lst:metrics-loop-motivation-2} should be worse that those for loop \ref{lst:metrics-loop-motivation-1}. While Intel compiler won't parallelize both, metric values should show a certain difference to a programmer (say \ref{lst:metrics-loop-motivation-2} is 0\% parallelizible, \ref{lst:metrics-loop-motivation-1} is 60\% parallelizible, while \ref{lst:metrics-loop-motivation-0} is 100\% parallelizible).\newline
+\null\qquad Loop in listing \ref{lst:metrics-loop-motivation-2} can be rewritten like loop in listing \ref{lst:metrics-loop-motivation-2}. That transformation immedeately lets Intel compiler to parallelize that reduction. While, Intel compiler does not do that transformation automatically, software engineer (given metric values and feedback hints) can.   
+\begin{lstlisting}[caption={Algorithmic reduction, hidden behind unsuccessful data structure choice (linked-list). If linear array was used instead, the loop would be parallelized by Intel compiler. Intel compiler reports: "not a parallel candidate" for that version}, captionpos=b, label=lst:metrics-loop-motivation-2]
 while (list_it != nullptr) {
 	sum += list_it->value;
     list_it = list_it->next;
 }
 \end{lstlisting}
-
 \begin{lstlisting}[caption={Loop with optimal data structure choice for algorithmic reduction. Intel compiler successfully parallelizes it.}, captionpos=b, label=lst:metrics-loop-motivation-3]
-while(i < size) {
+while (i < size) {
 	sum += c[i++];
 }
 \end{lstlisting}
+\null\qquad Metric values for these two \ref{lst:metrics-loop-motivation-2} and \ref{lst:metrics-loop-motivation-3} loops follow.\newline
+\null\qquad Loop in listing \ref{lst:metrics-loop-motivation-2}: \textit{loop-absolute-size}: 14, \textit{loop-payload-fraction}: 0.4286, \textit{loop-proper-sccs-number}: 1, \textit{loop-critical-payload-fraction}: 0.5,
+\textit{iterator-payload-total-cohesion}: 0.2188,
+\textit{iterator-payload-non-cf-cohesion}: 0.0312.\newline
+\null\qquad Loop in listing \ref{lst:metrics-loop-motivation-3}: \textit{loop-absolute-size}: 13, \textit{loop-payload-fraction}: 0.5385, \textit{loop-proper-sccs-number}: 1, \textit{loop-critical-payload-fraction}: 0.4286,
+\textit{iterator-payload-total-cohesion}: 0.2759,
+\textit{iterator-payload-non-cf-cohesion}: 0.0345.\newline
+\null\qquad Metric \textit{loop-critical-payload-fraction} exibit such idealistically expected pattern for this particular case. Metrics \textit{iterator-payload-total-cohesion}, \textit{iterator-payload-non-cf-cohesion} do that as well, but in order to reach ideally expected feedback (if it is principally possible), some tuning and possibly even additional metrics and modifications of these, are still required.
 
 \section{Metric Groups}
 \label{metrics-metric-groups}
@@ -107,6 +128,21 @@ for (i = 0; i < 2 * NK; i++) {
 \subsubsection{Loop Critical Payload Fraction}
 \label{metrics-loop-critical-payload-fraction}
 \qquad In the light of considerations given in the previous section, the fraction between critical and non-critical payload parts might have some correlation with loop parallelizability.  
+
+\subsection{The problem of proper SCCs number metric}
+\qquad The proper SCCs number metric was described in section \ref{metrics-loop-proper-sccs-number}. Despite the fact, that the metric seems to directly represent parallelisability inhibiting parts of the payload, figures in ... show that ICC compiler sometimes fails to parallelise loops even with 0 metric value. Listing \ref{lst:metrics-loop-example-2} below, gives such example.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\linewidth]{figs/metrics-example-loop-2-pdg.pdf}
+	\caption{Program dependence graph (PDG) of the loop \ref{lst:metrics-loop-example-2}, as built and visualized by the PPar tool \ref{ppar-tool}.}
+	\label{metrics-example-loop-2-pdg}
+\end{figure}
+
+\null\qquad Loop in the listing \ref{lst:metrics-loop-example-2} has a pretty simple PDG. There are no critical SCCs inside loop's payload. However, ICC compiler cannot parallelize this loop due to \textit{randlc} function call. Compiler has to be conservative and assume, that this function call introduces cross-iteration dependencies between iterations of the loop.\newline
+\null\qquad This example exposes drawback of proper SCCs number metric. This metric only considers structural properties of PDG and does not examine the nature of instructions, constituting the loop. 
+
+
 
 \subsection{Loop Dependence Metrics}
 \label{metrics-loop-dependence-metrics}

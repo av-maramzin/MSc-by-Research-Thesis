@@ -1,4 +1,5 @@
 \chapter{Analysis}
+\label{analysis}
 \null\qquad After the set of parallelisability metrics has been devised and proposed (see chapter \ref{metrics}) and a working framework for metrics research and analysis has been implemented and set (chapter \ref{ppar-tool} describes developed PPar tool), software source code parallelisability metric values can be gathered and analysed. This analysis task in not that trivial. There is, principally, an unlimited number of ways in which this data can be visualized, interpreted and processed. This chapter describes taken analysis approaches and presents findings in the report.\newline
 \null\qquad Table \ref{analysis-data-table} below presents the data, used for analysis. This data has been extracted from NAS parallel benchmarks (see chapter \ref{benchmarks}) and transformed into tabular format.
 \begin{figure}[htb]
@@ -170,10 +171,8 @@
 \end{cases}
 \end{equation*}\newline
     
-
 \section{Manual analysis}
 \label{analysis-manual-analysis}
-\subsection{NAS benchmark BT}
 \qquad Let's start from a trivial case and consider a loop, presented in listing \ref{lst:non-parallel-0}. This loop fills timer records array \textit{trecs[]} with timer reads. The latter are computed inside \textit{timer\_read()} function. Intel C/C++ compiler has to be conservative and does not parallelize that function, since it is not clear, whether there is a cross-iteration dependency introduced from inside the function, but the decision tree, presented in the figure \ref{decision-tree-depth-3} classifies that loop as parallelizible. Given that hint a programmer might check, if there are actually any states, preserved by \textit{timer\_read()} function from call to call, which might be distorted by the loop parallelization. This loop has \textit{iterator payload non-cf cohesion} equal to 0.0645, which correspond to parallelizible loops, according to results presented in the section \ref{analysis-single-metrics-vs-parallelizability}.              
 \begin{lstlisting}[caption={Loop, which has not been parallelized by Intel C/C++ compiler, but does seem algorithmically parallelizible, given absense of cross-iteration dependencies introduced by the function call. }, captionpos=b, label=lst:non-parallel-0, float,floatplacement=H]
 for (i = 1; i <= t_last; i++) {
@@ -181,7 +180,7 @@ for (i = 1; i <= t_last; i++) {
 }
 \end{lstlisting}\newline
 \null\qquad Another more elaborate case is presented in the listing \ref{lst:non-parallel-1}. Intel compiler failed to parallelize that loop nest, because it assumed that there is flow and anti dependencies between load from rhs[k][j][i][m] and store to rms[m]. But decision tree of depth 3 (see figure \ref{decision-tree-depth-3}) classifies that innermost loop as 65\% parallelizible and 35\% not, giving a programmer a little hope. Its classification could have been slightly better if there was not SCC inside the payload of the inner loop. Metric computing pass uses LLVM memory dependence analysis, which alike Intel compiler assumes dependencies between memory references to different arrays. Metric values for the innermost loop are: $\textit{iterator-payload non-cf cohesion}\approx 0.0357$, $\textit{iterator-payload total cohesion}\approx 0.3571$, $\textit{loop critical payload fraction}\approx 0.2963$.
-\begin{lstlisting}[caption={Loop, which has not been parallelized by Intel C/C++ compiler due to conservative anti and flow dependencies assumptions between references to rhs and rms. But these are different arrays and the loop actually computes reduction.}, captionpos=b, label=lst:non-parallel-1, float,floatplacement=H]
+\begin{lstlisting}[caption={\textit{SNU\_NAS/BT/src/error.c:84}. Loop, which has not been parallelized by Intel C/C++ compiler due to conservative anti and flow dependencies assumptions between references to rhs and rms. But these are different arrays and the loop actually computes reduction.}, captionpos=b, label=lst:non-parallel-1, float,floatplacement=H]
 for (k = 1; k <= grid_points[2]-2; k++) {
 	for (j = 1; j <= grid_points[1]-2; j++) {
 		for (i = 1; i <= grid_points[0]-2; i++) {
@@ -193,9 +192,10 @@ for (k = 1; k <= grid_points[2]-2; k++) {
 	} 
 }
 \end{lstlisting}\newline
-\null\qquad Assuming that a programmer accepted that metric hint, he decided to analyze and rewrite the loop with OpenMP pragmas (see figure \ref{lst:non-parallel-2}), since it it visible, that the loop computes reductions for all 5 rms array elements:\newline
+\null\qquad Assuming that a programmer accepted that metric hint, he decided to analyze and rewrite the loop with OpenMP pragmas (see figure \ref{lst:non-parallel-2}), since it it visible, that the loop computes reductions for all 5 rms array elements \ref{eq:equation-0}:\newline
 \begin{equation}
 rms\left[ m \right] = \sum\limits_{k \in grid\_points\left[ 2\right] -2}\sum\limits_{j \in grid\_points\left[ 1\right] -2}\sum\limits_{i \in grid\_points\left[ 0\right] -2} rhs\left[ k\right] \left[ j\right] \left[ i\right] \left[ m\right]
+\label{eq:equation-0}
 \end{equation}
 \begin{lstlisting}[caption={Loop, which has not been parallelized by Intel C/C++ compiler, but does seem algorithmically parallelizible, given absense of cross-iteration dependencies introduced by the function call. }, captionpos=b, label=lst:non-parallel-2, float,floatplacement=H]
 #pragma omp for nowait
@@ -214,26 +214,37 @@ for (m = 0; m < 5; m++) {
 	rms[m] += rms_local[m];
 }
 \end{lstlisting}
+\null\qquad Let's consider some more examples. Listing \ref{lst:non-parallel-3} shows another loop example, which computes reduction \ref{eq:equation-1}.
+\begin{equation}
+key\_buff\_ptr\left[ i \right] = \sum\limits_{j=0}^{i-1} key\_buff\_ptr\left[ i\right]
+\label{eq:equation-1}
+\end{equation}
+\null\qquad It is clear, that the loop in listing \ref{lst:non-parallel-3} should be rewritten in order to be parallelizible, but Intel compiler gives just answer "no", but programmer takes a look at the values of metrics: \textit{iterator-payload-non-cf-cohesion}: 0.04, \textit{iterator-payload-total-cohesion}: 0.3, \textit{loop-critical-payload-fraction}: 0.3077. These values take the loop down the decision tree \ref{decision-tree-depth-3} into parallelizible classification. Programmer might take that hint and rewrite the loop.\newline
+\begin{lstlisting}[caption={\textit{SNU\_NAS/IS/is.c:508}. Algorithmically parallelizible problem ends up hidden from compiler behind unsuccessful implementation.}, captionpos=b, label=lst:non-parallel-3, float, floatplacement=H, mathescape=true]
+for( i=0; i<MAX_KEY-1; i++ ) {
+	key_buff_ptr[i+1] += key_buff_ptr[i];
+}
+\end{lstlisting}
+\null\qquad NAS benchmarks contain a lot of such examples. Listings \ref{lst:non-parallel-4}, \ref{lst:non-parallel-5} show some more of them.
 
+\begin{lstlisting}[caption={\textit{SNU\_NAS/IS/is.c:468}. Algorithmically parallelizible problem ends up hidden from compiler behind unsuccessful implementation. Metrics: \textit{iterator-payload-non-cf-cohesion}: 0.0566, \textit{iterator-payload-total-cohesion}: 0.3208, \textit{loop-critical-payload-fraction}: 0.2143, \textit{loop-payload-fraction}: 0.6087}, captionpos=b, label=lst:non-parallel-4, float, floatplacement=H, mathescape=true]    
+for( i=1; i< NUM_BUCKETS; i++ ) {  
+	bucket_ptrs[i] = bucket_ptrs[i-1] + bucket_size[i-1];
+}
+\end{lstlisting}
 
-
-
-\subsection{The problem of proper SCCs number metric}
-\qquad The proper SCCs number metric was described in section \ref{metrics-loop-proper-sccs-number}. Despite the fact, that the metric seems to directly represent parallelisability inhibiting parts of the payload, figures in ... show that ICC compiler sometimes fails to parallelise loops even with 0 metric value. Listing \ref{lst:metrics-loop-example-2} below, gives such example.
-
-
-
-\begin{figure}[htb]
-	\centering
-	\includegraphics[width=\linewidth]{figs/metrics-example-loop-2-pdg.pdf}
-	\caption{Program dependence graph (PDG) of the loop \ref{lst:metrics-loop-example-2}, as built and visualized by the PPar tool \ref{ppar-tool}.}
-	\label{metrics-example-loop-2-pdg}
-\end{figure}
-
-\null\qquad Loop in the listing \ref{lst:metrics-loop-example-2} has a pretty simple PDG. There are no critical SCCs inside loop's payload. However, ICC compiler cannot parallelize this loop due to \textit{randlc} function call. Compiler has to be conservative and assume, that this function call introduces cross-iteration dependencies between iterations of the loop.\newline
-\null\qquad This example exposes drawback of proper SCCs number metric. This metric only considers structural properties of PDG and does not examine the nature of instructions, constituting the loop. 
-\subsection{Manual loop clustering analysis}
-
+\begin{lstlisting}[caption={\textit{SNU\_NAS/LU/src/l2norm.c:57}. Intel compiler refuses to parallelize that reduction problem due to assumed true and anti dependencies between memory references to different sum and v arrays. Inner loop metrics: \textit{iterator-payload-non-cf-cohesion}: 0.0331, \textit{iterator-payload-total-cohesion}: 0.3967, \textit{loop-critical-payload-fraction}: 0.1364, \textit{loop-payload-fraction}: 0.8148}, captionpos=b, label=lst:non-parallel-5, float, floatplacement=H, mathescape=true] 
+for (k = 1; k < nz0-1; k++) {
+	for (j = jst; j < jend; j++) {
+		for (i = ist; i < iend; i++) {
+			for (m = 0; m < 5; m++) {
+				sum[m] = sum[m] + 
+					v[k][j][i][m] * v[k][j][i][m];
+			}
+		}
+	}
+}
+\end{lstlisting}
 
 \section{Statistical analysis}
 \label{analysis-statistical-analysis}
