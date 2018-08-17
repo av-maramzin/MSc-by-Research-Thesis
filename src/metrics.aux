@@ -1,0 +1,91 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\@writefile{toc}{\contentsline {chapter}{\numberline {3}Software Parallelisability Metrics}{21}{chapter.3}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{metrics}{{3}{21}{Software Parallelisability Metrics}{chapter.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}General foundation and perspective of the work}{21}{section.3.1}}
+\newlabel{metrics-foundation-and-perspective}{{3.1}{21}{General foundation and perspective of the work}{section.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}Diversity in modern computer languages}{21}{subsection.3.1.1}}
+\newlabel{metrics-diversity-in-modern-computer-languages}{{3.1.1}{21}{Diversity in modern computer languages}{subsection.3.1.1}{}}
+\citation{patterson-and-hennessy-cod}
+\citation{patterson-and-hennessy-quantitative-approach}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}The modern role of compilers}{22}{subsection.3.1.2}}
+\newlabel{metrics-modern-role-of-compilers}{{3.1.2}{22}{The modern role of compilers}{subsection.3.1.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}The famous 80/20 rule}{22}{subsection.3.1.3}}
+\newlabel{metrics-famous-80-20-rule}{{3.1.3}{22}{The famous 80/20 rule}{subsection.3.1.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.4}Dependence-based approach to metrics computation}{22}{subsection.3.1.4}}
+\newlabel{metrics-dependence-based-approach}{{3.1.4}{22}{Dependence-based approach to metrics computation}{subsection.3.1.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Metrics use}{23}{section.3.2}}
+\newlabel{metrics-use}{{3.2}{23}{Metrics use}{section.3.2}{}}
+\newlabel{lst:metrics-loop-motivation-0}{{3.1}{23}{Example of parallelizible loop. Intel compiler successfully parallelizes it}{lstlisting.3.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.1}Example of parallelizible loop. Intel compiler successfully parallelizes it.}{23}{lstlisting.3.1}}
+\newlabel{lst:metrics-loop-motivation-1}{{3.2}{23}{Loop with true and anti cross iteration dependencies. Intel compiler detects dependency and refuses to parallelize the loop}{lstlisting.3.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.2}Loop with true and anti cross iteration dependencies. Intel compiler detects dependency and refuses to parallelize the loop.}{23}{lstlisting.3.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces PDG of loop in listing \ref  {lst:metrics-loop-motivation-0}. Graph contains two SCCs: one for iterator and one for critical payload part.\relax }}{24}{figure.caption.6}}
+\newlabel{metrics-use-pdg-0}{{3.1}{24}{PDG of loop in listing \ref {lst:metrics-loop-motivation-0}. Graph contains two SCCs: one for iterator and one for critical payload part.\relax }{figure.caption.6}{}}
+\newlabel{lst:metrics-loop-motivation-2}{{3.3}{25}{Algorithmic reduction, hidden behind unsuccessful data structure choice (linked-list). If linear array was used instead, the loop would be parallelized by Intel compiler. Intel compiler reports: "not a parallel candidate" for that version}{lstlisting.3.3}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.3}Algorithmic reduction, hidden behind unsuccessful data structure choice (linked-list). If linear array was used instead, the loop would be parallelized by Intel compiler. Intel compiler reports: "not a parallel candidate" for that version}{25}{lstlisting.3.3}}
+\newlabel{lst:metrics-loop-motivation-3}{{3.4}{25}{Loop with optimal data structure choice for algorithmic reduction. Intel compiler successfully parallelizes it}{lstlisting.3.4}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.4}Loop with optimal data structure choice for algorithmic reduction. Intel compiler successfully parallelizes it.}{25}{lstlisting.3.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}Metric Groups}{26}{section.3.3}}
+\newlabel{metrics-metric-groups}{{3.3}{26}{Metric Groups}{section.3.3}{}}
+\newlabel{lst:metrics-loop-example}{{3.5}{26}{Example loop, taken from EP NAS benchmark}{lstlisting.3.5}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.5}Example loop, taken from EP NAS benchmark}{26}{lstlisting.3.5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Program dependence graph (PDG) of the loop \ref  {lst:metrics-loop-example}, as built and visualized by the PPar tool \ref  {ppar-tool}.\relax }}{26}{figure.caption.7}}
+\newlabel{metrics-loop-example-pdg}{{3.2}{26}{Program dependence graph (PDG) of the loop \ref {lst:metrics-loop-example}, as built and visualized by the PPar tool \ref {ppar-tool}.\relax }{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Loop Proportion Metrics}{26}{subsection.3.3.1}}
+\newlabel{metrics-loop-proportion-metrics}{{3.3.1}{26}{Loop Proportion Metrics}{subsection.3.3.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1.1}Loop Absolute Size}{27}{subsubsection.3.3.1.1}}
+\newlabel{metrics-loop-absolute-size}{{3.3.1.1}{27}{Loop Absolute Size}{subsubsection.3.3.1.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1.2}Loop Payload Fraction}{27}{subsubsection.3.3.1.2}}
+\newlabel{metrics-loop-payload-fraction}{{3.3.1.2}{27}{Loop Payload Fraction}{subsubsection.3.3.1.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1.3}Loop Proper SCCs number}{27}{subsubsection.3.3.1.3}}
+\newlabel{metrics-loop-proper-sccs-number}{{3.3.1.3}{27}{Loop Proper SCCs number}{subsubsection.3.3.1.3}{}}
+\newlabel{lst:metrics-loop-example-1}{{3.6}{28}{Parallelizible loop, with no cross-iteration dependencies. Taken from EP NAS benchmark}{lstlisting.3.6}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.6}Parallelizible loop, with no cross-iteration dependencies. Taken from EP NAS benchmark.}{28}{lstlisting.3.6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces Program dependence graph (PDG) of the loop \ref  {lst:metrics-loop-example-1}, as built and visualized by the PPar tool \ref  {ppar-tool}.\relax }}{28}{figure.caption.9}}
+\newlabel{metrics-example-loop-1-pdg}{{3.3}{28}{Program dependence graph (PDG) of the loop \ref {lst:metrics-loop-example-1}, as built and visualized by the PPar tool \ref {ppar-tool}.\relax }{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1.4}Loop Critical Payload Fraction}{28}{subsubsection.3.3.1.4}}
+\newlabel{metrics-loop-critical-payload-fraction}{{3.3.1.4}{28}{Loop Critical Payload Fraction}{subsubsection.3.3.1.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1.5}The problem of proper SCCs number metric}{28}{subsubsection.3.3.1.5}}
+\newlabel{lst:metrics-loop-example-2}{{3.7}{29}{Loop, under question. Its parallelizability depends on things happening inside randlc() function. Intel compiler does not parallelize it, since it has to be conservative}{lstlisting.3.7}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.7}Loop, under question. Its parallelizability depends on things happening inside randlc() function. Intel compiler does not parallelize it, since it has to be conservative.}{29}{lstlisting.3.7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces Program dependence graph (PDG) of the loop \ref  {lst:metrics-loop-example-2}, as built and visualized by the PPar tool \ref  {ppar-tool}.\relax }}{29}{figure.caption.11}}
+\newlabel{metrics-example-loop-2-pdg}{{3.4}{29}{Program dependence graph (PDG) of the loop \ref {lst:metrics-loop-example-2}, as built and visualized by the PPar tool \ref {ppar-tool}.\relax }{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}Loop Dependence Metrics}{29}{subsection.3.3.2}}
+\newlabel{metrics-loop-dependence-metrics}{{3.3.2}{29}{Loop Dependence Metrics}{subsection.3.3.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}Loop Cohesion Metrics}{30}{subsection.3.3.3}}
+\newlabel{metrics-loop-cohesion-metrics}{{3.3.3}{30}{Loop Cohesion Metrics}{subsection.3.3.3}{}}
+\@setckpt{src/metrics}{
+\setcounter{page}{31}
+\setcounter{equation}{0}
+\setcounter{enumi}{3}
+\setcounter{enumii}{0}
+\setcounter{enumiii}{0}
+\setcounter{enumiv}{0}
+\setcounter{footnote}{0}
+\setcounter{mpfootnote}{0}
+\setcounter{part}{0}
+\setcounter{chapter}{3}
+\setcounter{section}{3}
+\setcounter{subsection}{3}
+\setcounter{subsubsection}{0}
+\setcounter{paragraph}{0}
+\setcounter{subparagraph}{0}
+\setcounter{figure}{4}
+\setcounter{table}{0}
+\setcounter{ContinuedFloat}{0}
+\setcounter{float@type}{8}
+\setcounter{subfigure}{0}
+\setcounter{subtable}{0}
+\setcounter{parentequation}{0}
+\setcounter{Item}{10}
+\setcounter{Hfootnote}{0}
+\setcounter{bookmark@seq@number}{43}
+\setcounter{r@tfl@t}{0}
+\setcounter{lstnumber}{4}
+\setcounter{definition}{0}
+\setcounter{section@level}{2}
+\setcounter{lstlisting}{7}
+}

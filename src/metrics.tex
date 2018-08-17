@@ -79,22 +79,19 @@ while (i < size) {
 
 \section{Metric Groups}
 \label{metrics-metric-groups}
-\qquad The whole set of proposed metrics is divided into several concepual groups. To provide an illustrative description of different metrics, let's consider a loop \ref{lst:metrics-loop-example} given below. This loop is taken form EP NAS benchmark (see \ref{benchmarks}).
+\qquad The whole set of proposed metrics is divided into several conceptual groups. To provide an illustrative description of different metrics, let's consider a loop \ref{lst:metrics-loop-example} given below. This loop is taken form EP NAS benchmark (see \ref{benchmarks}).
 \begin{lstlisting}[caption={Example loop, taken from EP NAS benchmark}, captionpos=b, label=lst:metrics-loop-example]
 for (i = 0; i < NQ; i++) {
 	gc = gc + q[i];
 }
 \end{lstlisting}
-
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\linewidth]{figs/metrics-example-loop-pdg.pdf}
 	\caption{Program dependence graph (PDG) of the loop \ref{lst:metrics-loop-example}, as built and visualized by the PPar tool \ref{ppar-tool}.}
 	\label{metrics-loop-example-pdg}
 \end{figure}
-
 \null\qquad Figure \ref{metrics-loop-example-pdg} above shows program dependence graph of the loop, given in the example. 
-
 
 \subsection{Loop Proportion Metrics}
 \label{metrics-loop-proportion-metrics}
@@ -129,29 +126,34 @@ for (i = 0; i < 2 * NK; i++) {
 \label{metrics-loop-critical-payload-fraction}
 \qquad In the light of considerations given in the previous section, the fraction between critical and non-critical payload parts might have some correlation with loop parallelizability.  
 
-\subsection{The problem of proper SCCs number metric}
-\qquad The proper SCCs number metric was described in section \ref{metrics-loop-proper-sccs-number}. Despite the fact, that the metric seems to directly represent parallelisability inhibiting parts of the payload, figures in ... show that ICC compiler sometimes fails to parallelise loops even with 0 metric value. Listing \ref{lst:metrics-loop-example-2} below, gives such example.
-
+\subsubsection{The problem of proper SCCs number metric}
+\qquad The proper SCCs number metric was described in section \ref{metrics-loop-proper-sccs-number}. Despite the fact, that the metric seems to directly represent parallelisability inhibiting parts of the payload, ICC compiler sometimes fails to parallelise loops even with 0 metric value. Listing \ref{lst:metrics-loop-example-2} below, gives such example.
+\begin{lstlisting}[float,floatplacement=H,caption={Loop, under question. Its parallelizability depends on things happening inside randlc() function. Intel compiler does not parallelize it, since it has to be conservative.}, captionpos=b, label=lst:metrics-loop-example-2]
+for (i = 0; i < MK + 1; i++) {
+	t2 = randlc(&t1, t1);
+}
+\end{lstlisting}
+Figure \ref{metrics-example-loop-2-pdg} shows the PDG of the code in the listing \ref{lst:metrics-loop-example-2}. Loop \ref{lst:metrics-loop-example-2} has a simple PDG. There are no critical SCCs inside loop's payload. However, ICC compiler cannot parallelize this loop due to \textit{randlc} function call. Compiler has to be conservative and assume, that this function call introduces cross-iteration dependencies between iterations of the loop.\newline   
 \begin{figure}[htb]
-	\centering
-	\includegraphics[width=\linewidth]{figs/metrics-example-loop-2-pdg.pdf}
-	\caption{Program dependence graph (PDG) of the loop \ref{lst:metrics-loop-example-2}, as built and visualized by the PPar tool \ref{ppar-tool}.}
-	\label{metrics-example-loop-2-pdg}
+\centering
+\includegraphics[width=\linewidth]{figs/metrics-example-loop-2-pdg.pdf}
+\caption{Program dependence graph (PDG) of the loop \ref{lst:metrics-loop-example-2}, as built and visualized by the PPar tool \ref{ppar-tool}.}
+\label{metrics-example-loop-2-pdg}
 \end{figure}
-
-\null\qquad Loop in the listing \ref{lst:metrics-loop-example-2} has a pretty simple PDG. There are no critical SCCs inside loop's payload. However, ICC compiler cannot parallelize this loop due to \textit{randlc} function call. Compiler has to be conservative and assume, that this function call introduces cross-iteration dependencies between iterations of the loop.\newline
 \null\qquad This example exposes drawback of proper SCCs number metric. This metric only considers structural properties of PDG and does not examine the nature of instructions, constituting the loop. 
-
-
 
 \subsection{Loop Dependence Metrics}
 \label{metrics-loop-dependence-metrics}
+\qquad Different types of dependencies have been described in section \ref{background-dependence-theory} of the thesis. These dependencies introduce different sorts of constraints into loops, which prevent their parallelization.\newline
+\null\qquad These metrics simply count the number of dependencies in the whole loop payload, as well as in the critical part of the payload (if it is present). For payload we have: payload true dependencies number, payload anti dependencies number, payload output dependencies number and the total amount of dependencies in the payload. The same set of metric is present for the critical payload part of loops.\newline
+\null\qquad The intuition behind these metrics is apparent. The bigger the amount of dependencies we have in a loop, especially in its critical part, the harder it is going to be to parallelize it.
 
 \subsection{Loop Cohesion Metrics}
 \label{metrics-loop-cohesion-metrics}
-\qquad As cohesion and coupling metrics have been proposed for computer software \ref{background-cohesion-and-coupling}, these properties can also be extended in context of this work. \newline
-\null\qquad These properties characterize the degree of inter-dependence between different parts of loops. As was shown in the previous 
-
-The main motivation behind the metrics out of this group is the tighter the parts of a loop are coupled together (in terms of dependencies), the harder it is going to be to split and parallalize the loop.   
-
+\qquad As cohesion and coupling metrics have been proposed for computer software \ref{background-cohesion-and-coupling}, these properties can also be extended in context of this work.\newline
+\null\qquad These properties characterize the degree of inter-dependence between different parts of loops. In this work we introduce two main types of cohesion metrics: iterator-payload cohesion and critical payload cohesion. The first characterizes the degree of coupling between loop iterator and loop payload. The second characterizes coupling between non-critical part of loop payload (all instructions, which do not belong to proper SCCs of a loop) and payload critical part. Both of these metrics are represented as a fraction.\newline
+\null\qquad Iterator-payload cohesion is defined as the ratio of a number of dependence edges between iterator and payload to the total number of edges in the whole loop (iterator and payload altogether). An edge is going from iterator to the payload, if it originates in instruction belonging to iterator SCC and ends in instruction, belonging to the payload of a loop. Edges, going in reverse direction, from loop payload to loop iterator are also counted as cohesion edges.\newline
+\null\qquad Critical payload cohesion is also defined alike, as the ratio of a number of edges between critical and non-critical payload parts to the whole number of edges in a loop payload.\newline
+\null\qquad Both of these cohesion metrics are further subdivided into two types: total cohesion and non-CF (non Control Flow) cohesion. Difference follows out of names. Total cohesion counts all edges, non-CF those, which are not control dependencies.\newline
+\null\qquad While both of these metrics make sense, it is not that obvious, what sort of correlation we should expect.    
 

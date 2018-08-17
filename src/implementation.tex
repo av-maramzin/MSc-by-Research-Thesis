@@ -1,8 +1,11 @@
-\chapter{Software parallelisability metrics tool} \label{ppar-tool}
-\qquad This chapter describes the tool developed for software source code parallelisability metrics research, how to use it, its software architecture and all the underlying technologies and libraries used during its development. \newline\null\qquad The tool is developed with the C++ language and is almost completely based on the \textsc{LLVM} library of modular and reusable compiler technologies \cite{llvm-paper} \cite{llvm-official-website}. The tool is implemented as a set of LLVM passes (see LLVM online documentation for further technical details \cite{llvm-online-docs}). The tool can be found at \cite{ppar-tool}. All parts of the tool rely heavily on the standard C++ template mechanism and C++ Standard Template Library (STL). \newline \null\qquad The tool operates on the level of LLVM intermediate representation \cite{llvm-online-docs-ir} (LLVM IR) and completely decoupled from input languages as well as from target machine instruction sets. Theoretically, the tool can be used for source code parallelisability analysis of any arbitrary programming languages as it does not depend on any exact programming language concepts, data structures and constructs (such as conditional loops, for loops, range-for loops, goto statements, lists, maps, etc). The tool operates on the level of program dependencies \ref{background-dependence} (data, control, etc), which are abstracted away from programming languages domain into a separate dependence analysis theory \ref{background-dependence-theory}. In order to use the tool, one must provide a way of compiling input language into LLVM intermediate representation. \newline \null\qquad Conceptually the tool does the following. It accepts C/C++ programs as and input. \newline \null\qquad In this project all proposed concepts are being examined with the use of Clang/Clang++ as a front end to transform input C/C++ source code into LLVM instruction set. \newline\null\qquad The remainder of the chapter is structured as follows. Section \ref{implementation-llvm-analyses} briefly describes parts of the LLVM library used in the project. Descriptions are mostly taken from the source code of LLVM and can be studied in more details at \cite{llvm-doxygen-docs}.     
+\chapter{Computing Software Metrics for Parallelism} \label{ppar-tool}
+\qquad This chapter describes the tool developed for software source code parallelisability metrics research, how to use it, its software architecture and all the underlying technologies and libraries used during its development.\newline
+\null\qquad The tool is developed with the C++ language and is almost completely based on the \textsc{LLVM} library of modular and reusable compiler technologies \cite{llvm-paper}, \cite{llvm-official-website}. The tool is implemented as a set of LLVM passes (see LLVM online documentation for further technical details \cite{llvm-online-docs}). The tool can be found at \cite{ppar-tool}. All parts of the tool rely heavily on the standard C++ template mechanism and C++ Standard Template Library (STL).\newline 
+\null\qquad The tool operates on the level of LLVM intermediate representation \cite{llvm-online-docs-ir} (LLVM IR) and completely decoupled from input languages, as well as from target machine instruction sets. Theoretically, the tool can be used for source code parallelisability analysis of any arbitrary programming languages, as it does not depend on any exact programming language concepts, data structures and constructs (such as conditional loops, for loops, range-for loops, goto statements, lists, maps, etc). The tool operates on the level of program dependencies \ref{background-dependence-types} (data, control, etc), which are abstracted away from programming languages domain into a separate dependence analysis theory \ref{background-dependence-theory}. In order to use the tool, one must provide just a way of compiling input language into LLVM intermediate representation.\newline 
+\null\qquad In this project all proposed concepts are being examined with the use of Clang/Clang++ as a front-end to transform input C/C++ source code into LLVM instruction set.\newline
 
-\section{Tool implementation} \label{ppar-tool-implementation}
-\qquad .There are several LLVM provided analyses being used by the tool.
+\section{Tool implementation} 
+\label{ppar-tool-implementation}
 
 \subsection{General software architecture} \label{ppar-tool-general-software-architecture}
 \qquad The tool is implemented withing LLVM pass framework (see \cite{llvm-online-docs-pass-framework}) and architected as a set of LLVM passes, dependent on each other and interacting through the standard mechanism LLVM pass manager provides. There are basically three types of passes in the tool, which are implemented as C++ template classes:
@@ -20,36 +23,32 @@
 
 \end{description} 
 
-\quad These passes rely on some standard LLVM analyses and facilities as well as on the functionality developed withing the current project. Standard LLVM passes, used by the tool are described in section \ref{tool-standard-llvm-analyses} below. Representation of dependence graphs in the memory is described in the section \ref{tool-graph-representation} of this chapter. Section \ref{tool-graph-visualization} describes graph visualisation facilities, provided by the tool. Exact specializations of pass templates, described above, correspond to program dependence graph theory given in section \ref{background-program-dependence-graph}. LLVM details of these specializations are described in section \ref{tool-template-specs}.  
+\quad These passes rely on some standard LLVM analyses and facilities as well as on the functionality developed withing the current project. Standard LLVM passes, used by the tool are described in section \ref{ppar-tool-standard-llvm-analyses} below. Representation of dependence graphs in the memory is described in the section \ref{ppar-tool-graph-representation} of this chapter. Section \ref{ppar-tool-graph-visualization} describes graph visualisation facilities, provided by the tool. Exact specializations of pass templates, described above, correspond to program dependence graph theory given in section \ref{background-program-dependence-graph}. LLVM details of these specializations are described in section \ref{ppar-tool-template-specs}.  
 
-\subsection{Standard LLVM analyses} \label{ppar-tool-standard-llvm-analyses}
+\subsection{Standard LLVM analyses} 
+\label{ppar-tool-standard-llvm-analyses}
 \qquad The tool uses a number of standard LLVM analyses.
-
 \begin{description}
-	
-	\item [LoopInfo] This analysis function pass identifies all natural loops withing the given function and assigns a loop depth to every function's basic block. This analysis calculates the nesting structure of loops in the function. For each natural loop identified, this analysis identifies natural loops, contained entirely within the loop and basic blocks that make up the loop.   
-	
-	\item [DependenceAnalysis] 
-	
-	\item [PostDominatorTree]
-	
+\item [LoopInfo] This analysis function pass identifies all natural loops withing the given function and assigns a loop depth to every function's basic block. This analysis calculates the nesting structure of loops in the function. For each natural loop identified, this analysis identifies natural loops, contained entirely within the loop and basic blocks that make up the loop.
+\item [DependenceAnalysis] This standard LLVM pass is based on the paper \cite{practical-dep-testing-paper}. This pass tries to analyze memory references on the subject of mutual dependencies and depends on the set of other passes like alias analysis (see \cite{muchnick-compilers-book}). Sometimes it cannot give precise answer and just reports, that there might be a dependence between these two given memory references. This pass is used in Memory Dependence Graph (MDG) (see section \ref{background-program-dependence-graph}) construction.  
+\item [PostDominatorTree] This LLVM pass construcs a post-dominator tree. This post-dominator tree is used during Control Flow Graph (CFG) construction. Detailed algorithms and definitions can be found in the book \cite{muchnick-compilers-book}.
 \end{description} 
 
 \subsection{Graph representation} \label{ppar-tool-graph-representation}
-\qquad Since LLVM, as of version 6.0, does not currently provide a standard dependence graph (DG) implementation, custom graph building facilities were implemented in the project as a \textbf{Graph\textless \textsc{NODE},\textsc{EDGE}\textgreater} C++ template. Template expects two parameters, which must be pointers to the \textbf{NODE} and \textbf{EDGE} classes. These classes represent information assosiated with every graph's node and edge correspondingly. The tool uses several types of dependence graphs in its work and these parameters usually end up to be one of the following. NODE parameter is useually either llvm::Instruction or llvm::BasicBlock   
+\qquad Since LLVM, as of version 6.0, does not currently provide a standard dependence graph (DG) implementation, custom graph building facilities were implemented in the project as a \textbf{Graph\textless \textsc{NODE},\textsc{EDGE}\textgreater} C++ template. Template expects two parameters, which must be pointers to \textbf{NODE} and \textbf{EDGE} classes. These classes represent information assosiated with every graph's node and edge correspondingly. The tool uses several types of dependence graphs in its work and these parameters usually end up to be one of the following. NODE parameter is usually either llvm::Instruction or llvm::BasicBlock. EDGE parameter is usually either ppar::Dependence developed wrapper or llvm::Dependence classes.
 
 \subsection{Graph visualization facilities} \label{ppar-tool-graph-visualizations}
-\qquad While the main output of the tool is a set of software parallelisability metrics, the tool also accepts a number of side command line options that are useful for debugging to produce additional information, which can supplement bare metric values with some additional insights. Since the tool is based on a set of dependence graphs of programs, it is particularly useful to visualize these graphs. \newline
-\null\qquad \textbf{GraphPrinterPass\textless NODE,EDGE,PASS\textgreater} C++ template is designed for doing exactly that.
+\qquad While the main output of the tool is a set of software parallelisability metrics, the tool also accepts a number of side command line options that are useful for debugging to produce additional information, which can supplement bare metric values with some additional insights. Since the tool is based on a set of dependence graphs of programs, it is particularly useful to visualize these graphs. \textbf{GraphPrinterPass\textless NODE,EDGE,PASS\textgreater} C++ template is designed for doing exactly that.
 
-
-
-\subsection{Template specializations} \label{ppar-tool-template-specs}
+\subsection{Template specializations} 
+\label{ppar-tool-template-specs}
+\qquad Template \textbf{GraphPass\textless NODE,EDGE,PASS\textgreater} is specialized for 4 different dependence graph types, as described in the section \ref{background-program-dependence-graph}:\newline \textbf{GraphPass\textless llvm::Instruction*,llvm::Dependence,MemoryDependenceGraphPass\textgreater}, \textbf{GraphPass\textless llvm::Instruction*,ppar::Dependence,DataDependenceGraphPass\textgreater}, \textbf{GraphPass\textless llvm::BasicBlock*,ppar::Dependence,ControlDependenceGraphPass\textgreater}, \textbf{GraphPass\textless llvm::Instruction*,ppar::Dependence,ProgramDependenceGraphPass\textgreater}.\newline
+\null\qquad The same specializations take place for corresponding graph printers. \textbf{MetricPass\textless METRIC\textgreater} is specialized for all metric types.   
 
 \section{The tool workflow} \label{ppar-tool-workflow}
 \qquad The workflow of the tool can be conceptually divided into 4 phases, following each other in a pipelined fashion:
 \begin{enumerate}[align=left,leftmargin=*]
-\item \textbf{LLVM part: C/C++ translation into LLVM IR, dependence analysis and loop identification.} The tool is operating on the level of LLVM intermediate representation (IR) \cite{llvm-online-docs-ir}. Clang/Clang++ front-ends translate input C/C++ source code into this IR form. Then, LLVM performs a series of its standard analyses, required by the tool (see section \ref{tool-standard-llvm-analyses}). LoopInfo identifies all the loops in program functions and provides convenient interface for further queries. LLVM builds def-use chains between LLVM IR-level instructions during IR construction. LLVM's dependence analysis identifies data dependencies between memory references in a function. Post-dominance analysis builds a post-dominator tree.
+\item \textbf{LLVM part: C/C++ translation into LLVM IR, dependence analysis and loop identification.} The tool is operating on the level of LLVM intermediate representation (IR) \cite{llvm-online-docs-ir}. Clang/Clang++ front-ends translate input C/C++ source code into this IR form. Then, LLVM performs a series of its standard analyses, required by the tool (see section \ref{ppar-tool-standard-llvm-analyses}). LoopInfo identifies all the loops in program functions and provides convenient interface for further queries. LLVM builds def-use chains between LLVM IR-level instructions during IR construction. LLVM's dependence analysis identifies data dependencies between memory references in a function. Post-dominance analysis builds a post-dominator tree.
 	
 \item \textbf{PPar tool program dependence graph (PDG) building part.} In some sense, this part represents the front-end of PPar tool. The tool uses LLVM use-def chains, linking IR instructions, to build data dependence graph (DDG) of a program being examined. After that it uses LLVM dependence analysis and post-dominance tree to build memory dependence graph (MDG) and control dependence graphs (CDG) respectively. The order of these passes does not matter. In principle, they could be done in parallel. Once all three graphs are built, the tool combines all dependencies present in them into a unified program dependence graph (PDG). Detailed descriptions of these graphs can be found in section \ref{background-program-dependence-graph}. All that functionality is done by the corresponding specializations of \textbf{GraphPass\textless NODE,EDGE,PASS\textgreater} template (see \ref{ppar-tool-general-software-architecture}) for every type of dependence graph.   
 
@@ -59,10 +58,6 @@
 		  
 \end{enumerate}
 
-\section{Tool use} \label{ppar-tool-use}
-
-\qquad 
-
-
-
-
+\section{Tool use} 
+\label{ppar-tool-use}
+\qquad In this project PPar tool is used in the following way. Tool computes all proposed loop parallelizability metrics (see section \ref{metrics}) for all NAS benchmark loops (see chapter \ref{benchmarks}). Graph visualization facilities have been used during development, debugging and validation of the tool. These visualizations are also used in later analyses stages.

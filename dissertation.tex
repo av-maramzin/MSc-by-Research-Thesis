@@ -80,11 +80,13 @@
 \usepackage{hyperref}
 
 \usepackage{enumitem}
+\usepackage{rotating}
+\usepackage{pdflscape}
 
 \usepackage{listings}
 \usepackage{color}
 
-\lstset{ 
+\lstset{
 	backgroundcolor=\color{white}, % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
 	basicstyle=\normalsize\ttfamily, % the size of the fonts that are used for the code
 	breakatwhitespace=false, % sets if automatic breaks should only happen at whitespace
@@ -119,7 +121,7 @@
 
 
 %% Information about the title, etc.
-\title{Metric-based Software Parallelisability Analyzer}
+\title{Software Metrics for Parallelism}
 \author{Aleksandr Maramzin}
 
 %% If the year of submission is not the current year, uncomment this line and 
@@ -131,9 +133,8 @@
 
 %% Specify the abstract here.
 \abstract{%
-\qquad Parallelism pervades the modern computing world. Almost all modern computing systems provide parallel computing resources to some degree or another. The major problem in the field is that these available resources are not always efficiently utilized. To take the most out of these parallel resources, applications running on them must be parallel as well. \newline 
-\null\qquad Despite progress in parallel programming language design and increased availability of parallel programming frameworks, writing efficient parallel software from scratch is still a challenging task mastered by only a few expert programmers. While these experts combine domain knowledge, algorithmic insight and parallel programming skills, most “average” programmers are often lacking skills in at least one of these areas. In this project we investigate methods for providing programmers with real-time feedback on the quality of their code with respect to parallelisation opportunities and scalability to address short-comings before they manifest as “bad” and hard-to-parallelise code. \newline \null\qquad We draw on the experience of the software engineering community and software metrics originally developed to identify “bad” sequential code, typically prone to errors and hard to maintain. The ambition of this project is to develop novel software parallelisability metrics, which can be used as quality indicators for parallel
-code and guide the software development process towards better parallel code.
+\qquad Parallelism pervades the modern computing world. Almost all modern computing systems provide parallel computing hardware resources to some degree or another. The major problem in the field is that these available resources are not always efficiently utilized. To take the most out of these parallel resources, applications running on them must be parallel as well. \newline 
+\null\qquad Despite the progress in parallel programming languages design and increased availability of parallel programming frameworks, writing efficient parallel software from scratch is still a challenging task, mastered by only a few expert programmers. While these experts combine domain knowledge, algorithmic insight and parallel programming skills, most “average” programmers are often lacking skills in at least one of these areas. In this project we investigate methods for providing programmers with real-time feedback on the quality of their code with respect to parallelization opportunities and scalability to address short-comings before they manifest as suboptimal and hard-to-parallelise code.\newline \null\qquad We draw on the experience of the software engineering community and software metrics originally developed to identify low quality sequential code, typically prone to errors and hard to maintain. The goal of this project is to develop novel software parallelisability metrics, which can be used as quality indicators for parallel code and guide the software development process towards better parallel code.
 }
 
 %% Now we start with the actual document.
@@ -147,7 +148,12 @@ code and guide the software development process towards better parallel code.
 
 %% Acknowledgements
 \begin{acknowledgements}
+\qquad I would like to express my sincere gratitude to my supervision team, especially to my first advisor Prof. Bjoern Franke for his continuous guidance throughout my MSc by Research study and work. I would not have finished my project without his advices and directions.\newline
+\null\qquad Also, I would like to thank all of my classmates for all the valueable discussions we've had throughout the year. Especially, I would like to thank Chris Vasiladiotis for sharing his expertise and his testing framework, which enabled me to get results as early as possible.\newline
+\null\qquad And, of course, I am really grateful to my mother for her constant support and encouragement.\newline
 
+\null\quad \textbf{This work was supported in part by the EPSRC Centre for Doctoral Training in Pervasive Parallelism, funded by the UK Engineering and Physical Sciences Research Council (grant EP/L01503X/1) and the University of Edinburgh.}       
+ 
 \end{acknowledgements}
 
 %% Next we need to have the declaration.
