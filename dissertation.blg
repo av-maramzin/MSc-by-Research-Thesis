@@ -1,0 +1,61 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: dissertation.aux
+A level-1 auxiliary file: src/introduction.aux
+A level-1 auxiliary file: src/background.aux
+A level-1 auxiliary file: src/metrics.aux
+A level-1 auxiliary file: src/implementation.aux
+A level-1 auxiliary file: src/benchmarks.aux
+A level-1 auxiliary file: src/analysis.aux
+A level-1 auxiliary file: src/results.aux
+A level-1 auxiliary file: src/future.aux
+A level-1 auxiliary file: src/appendix.aux
+The style file: unsrt.bst
+Database file #1: bibliography.bib
+Too many commas in name 1 of "Aline Lopes Timóteo, Alexandre Álvaro, Eduardo Santana de Almeida, Silvio Romero de Lemos Meira" for entry metrics-survey-1-paper
+while executing---line 944 of file unsrt.bst
+Warning--empty journal in metrics-survey-1-paper
+Warning--empty journal in metrics-survey-dynamic-paper
+Warning--empty journal in function-points-paper
+You've used 34 entries,
+            1791 wiz_defined-function locations,
+            634 strings with 9562 characters,
+and the built_in function-call counts, 6345 in all, are:
+= -- 599
+> -- 194
+< -- 6
++ -- 82
+- -- 48
+* -- 275
+:= -- 885
+add.period$ -- 98
+call.type$ -- 34
+change.case$ -- 30
+chr.to.int$ -- 0
+cite$ -- 37
+duplicate$ -- 324
+empty$ -- 734
+format.name$ -- 48
+if$ -- 1537
+int.to.chr$ -- 0
+int.to.str$ -- 34
+missing$ -- 26
+newline$ -- 163
+num.names$ -- 23
+pop$ -- 162
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 207
+stack$ -- 0
+substring$ -- 279
+swap$ -- 84
+text.length$ -- 6
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 3
+while$ -- 48
+width$ -- 36
+write$ -- 342
+(There was 1 error message)

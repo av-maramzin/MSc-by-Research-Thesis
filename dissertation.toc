@@ -1,0 +1,73 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}General words on parallel programming}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Problems of modern parallelizability assistance tools}{2}{section.1.2}
+\contentsline {section}{\numberline {1.3}Software source code metrics for parallelism}{2}{section.1.3}
+\contentsline {section}{\numberline {1.4}Software metrics for parallelism as a simple quantitative feedback to a programmer}{3}{section.1.4}
+\contentsline {section}{\numberline {1.5}The structure and the content of the thesis}{4}{section.1.5}
+\contentsline {chapter}{\numberline {2}Background and Related Work}{7}{chapter.2}
+\contentsline {section}{\numberline {2.1}Software metrics in computer science}{8}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Source lines of code (SLOC) / lines of code (LOC)}{9}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}McCabe's cyclomatic complexity (CC)}{9}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Halstead's complexity measures}{9}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}Software cohesion and coupling}{10}{subsection.2.1.4}
+\contentsline {subsection}{\numberline {2.1.5}Function points}{10}{subsection.2.1.5}
+\contentsline {subsection}{\numberline {2.1.6}Object-Oriented software metrics}{10}{subsection.2.1.6}
+\contentsline {subsection}{\numberline {2.1.7}Security metrics for source code structures}{11}{subsection.2.1.7}
+\contentsline {subsection}{\numberline {2.1.8}Wrap-up}{11}{subsection.2.1.8}
+\contentsline {section}{\numberline {2.2}Metrics in the area of parallel computing}{11}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Speedup variants}{12}{subsection.2.2.1}
+\contentsline {section}{\numberline {2.3}Dependence theory}{13}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Dependence intuition}{13}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Types of dependencies}{14}{subsection.2.3.2}
+\contentsline {section}{\numberline {2.4}Graph theory}{16}{section.2.4}
+\contentsline {section}{\numberline {2.5}Program Dependence Graph (PDG)}{16}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}Data dependence graph (DDG)}{16}{subsection.2.5.1}
+\contentsline {subsection}{\numberline {2.5.2}Memory dependence graph (MDG)}{17}{subsection.2.5.2}
+\contentsline {subsection}{\numberline {2.5.3}Control dependence graph (CDG)}{17}{subsection.2.5.3}
+\contentsline {subsection}{\numberline {2.5.4}Program dependence graph (PDG)}{17}{subsection.2.5.4}
+\contentsline {section}{\numberline {2.6}Loop iterator recognition and loop decoupling \cite {iterator-recognition-paper}}{17}{section.2.6}
+\contentsline {subsection}{\numberline {2.6.1}Generalized loop iterator definition}{18}{subsection.2.6.1}
+\contentsline {subsection}{\numberline {2.6.2}Loop decoupling and iterator recognition analysis}{18}{subsection.2.6.2}
+\contentsline {section}{\numberline {2.7}Modern parallelisability advisor tools}{19}{section.2.7}
+\contentsline {subsection}{\numberline {2.7.1}Automatic parallelisation with Intel(R) C/C++ compilers (ICC)}{20}{subsection.2.7.1}
+\contentsline {chapter}{\numberline {3}Software Parallelisability Metrics}{21}{chapter.3}
+\contentsline {section}{\numberline {3.1}General foundation and perspective of the work}{21}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Diversity in modern computer languages}{21}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}The modern role of compilers}{22}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}The famous 80/20 rule}{22}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.4}Dependence-based approach to metrics computation}{22}{subsection.3.1.4}
+\contentsline {section}{\numberline {3.2}Metrics use}{23}{section.3.2}
+\contentsline {section}{\numberline {3.3}Metric Groups}{26}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Loop Proportion Metrics}{26}{subsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.1.1}Loop Absolute Size}{27}{subsubsection.3.3.1.1}
+\contentsline {subsubsection}{\numberline {3.3.1.2}Loop Payload Fraction}{27}{subsubsection.3.3.1.2}
+\contentsline {subsubsection}{\numberline {3.3.1.3}Loop Proper SCCs number}{27}{subsubsection.3.3.1.3}
+\contentsline {subsubsection}{\numberline {3.3.1.4}Loop Critical Payload Fraction}{28}{subsubsection.3.3.1.4}
+\contentsline {subsubsection}{\numberline {3.3.1.5}The problem of proper SCCs number metric}{28}{subsubsection.3.3.1.5}
+\contentsline {subsection}{\numberline {3.3.2}Loop Dependence Metrics}{29}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}Loop Cohesion Metrics}{30}{subsection.3.3.3}
+\contentsline {chapter}{\numberline {4}Computing Software Metrics for Parallelism}{31}{chapter.4}
+\contentsline {section}{\numberline {4.1}Tool implementation}{32}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}General software architecture}{32}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Standard LLVM analyses}{33}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Graph representation}{33}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}Graph visualization facilities}{34}{subsection.4.1.4}
+\contentsline {subsection}{\numberline {4.1.5}Template specializations}{34}{subsection.4.1.5}
+\contentsline {section}{\numberline {4.2}The tool workflow}{34}{section.4.2}
+\contentsline {section}{\numberline {4.3}Tool use}{35}{section.4.3}
+\contentsline {chapter}{\numberline {5}Benchmarks}{37}{chapter.5}
+\contentsline {chapter}{\numberline {6}Evaluation}{39}{chapter.6}
+\contentsline {section}{\numberline {6.1}Analyses preparation phase}{41}{section.6.1}
+\contentsline {section}{\numberline {6.2}Data interpretation and visualization}{43}{section.6.2}
+\contentsline {subsection}{\numberline {6.2.1}Single loop metrics vs loop parallelisability analysis}{43}{subsection.6.2.1}
+\contentsline {subsubsection}{\numberline {6.2.1.1}Loop proportion metrics}{43}{subsubsection.6.2.1.1}
+\contentsline {subsubsection}{\numberline {6.2.1.2}Loop Dependence Metrics}{48}{subsubsection.6.2.1.2}
+\contentsline {subsubsection}{\numberline {6.2.1.3}Loop Cohesion Metrics}{48}{subsubsection.6.2.1.3}
+\contentsline {subsection}{\numberline {6.2.2}Data clustering analysis}{51}{subsection.6.2.2}
+\contentsline {subsection}{\numberline {6.2.3}Decision tree based parallelisability classification}{54}{subsection.6.2.3}
+\contentsline {section}{\numberline {6.3}Manual analysis}{59}{section.6.3}
+\contentsline {section}{\numberline {6.4}Statistical analysis}{62}{section.6.4}
+\contentsline {chapter}{\numberline {7}Summary and Conclusion}{67}{chapter.7}
+\contentsline {chapter}{\numberline {8}Future work and current limitations}{73}{chapter.8}
+\contentsline {chapter}{\numberline {A}Appendix}{75}{appendix.A}
+\contentsline {chapter}{Bibliography}{81}{appendix*.41}

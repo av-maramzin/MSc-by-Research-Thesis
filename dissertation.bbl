@@ -1,0 +1,192 @@
+\begin{thebibliography}{10}
+
+\bibitem{iterator-recognition-paper}
+Stanislav Manilov, Christos Vasiladiotis, and Bj\"{o}rn Franke.
+\newblock Generalized profile-guided iterator recognition.
+\newblock In {\em Proceedings of the 27th International Conference on Compiler
+  Construction}, CC 2018, pages 185--195, New York, NY, USA, 2018. ACM.
+
+\bibitem{pdg-paper}
+Jeanne Ferrante, Karl~J. Ottenstein, and Joe~D. Warren.
+\newblock The program dependence graph and its use in optimization.
+\newblock {\em ACM Trans. Program. Lang. Syst.}, 9(3):319--349, July 1987.
+
+\bibitem{optimizing-compilers-book}
+Ken Kennedy and John~R. Allen.
+\newblock {\em Optimizing Compilers for Modern Architectures: A
+  Dependence-based Approach}.
+\newblock Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 2002.
+
+\bibitem{llvm-paper}
+Chris Lattner and Vikram Adve.
+\newblock Llvm: A compilation framework for lifelong program analysis \&
+  transformation.
+\newblock In {\em Proceedings of the International Symposium on Code Generation
+  and Optimization: Feedback-directed and Runtime Optimization}, CGO '04, pages
+  75--, Washington, DC, USA, 2004. IEEE Computer Society.
+
+\bibitem{llvm-official-website}
+\textsc{LLVM} \uppercase{o}fficial \uppercase{w}ebsite.
+\newblock \url{http://llvm.org/}.
+
+\bibitem{intel-parallel-studio}
+\uppercase{I}ntel \uppercase{P}arallel \uppercase{S}tudio \textsc{XE} 2018.
+\newblock \url{https://software.intel.com/en-us/parallel-studio-xe}.
+
+\bibitem{metrics-survey-0-paper}
+Fabrizio Riguzzi and Fabrizio Riguzzi.
+\newblock A survey of software metrics.
+\newblock DEIS Technical Report no. DEIS-LIA-96-010., 1996.
+
+\bibitem{metrics-survey-1-paper}
+Eduardo Santana de Almeida Silvio Romero de Lemos~Meira Aline Lopes~Timóteo,
+  Alexandre~Álvaro.
+\newblock Software metrics: a survey.
+\newblock 2014.
+
+\bibitem{metrics-survey-dynamic-paper}
+Jitender Chhabra and Varun Gupta.
+\newblock A survey of dynamic software metrics.
+\newblock 25:1016--1029, 09 2010.
+
+\bibitem{cyclomatic-complexity-paper}
+Thomas~J. McCabe.
+\newblock A complexity measure.
+\newblock In {\em Proceedings of the 2Nd International Conference on Software
+  Engineering}, ICSE '76, pages 407--, Los Alamitos, CA, USA, 1976. IEEE
+  Computer Society Press.
+
+\bibitem{halstead-book}
+Maurice~H. Halstead.
+\newblock {\em Elements of Software Science (Operating and Programming Systems
+  Series)}.
+\newblock Elsevier Science Inc., New York, NY, USA, 1977.
+
+\bibitem{cohesion-coupling-paper}
+W.~P. Stevens, G.~J. Myers, and L.~L. Constantine.
+\newblock Structured design.
+\newblock {\em IBM Syst. J.}, 13(2):115--139, June 1974.
+
+\bibitem{function-points-paper}
+Allan Albrecht.
+\newblock Measuring application development productivity.
+\newblock 1979.
+
+\bibitem{metrics-object-oriented-paper}
+S.~R. Chidamber and C.~F. Kemerer.
+\newblock A metrics suite for object oriented design.
+\newblock {\em IEEE Trans. Softw. Eng.}, 20(6):476--493, June 1994.
+
+\bibitem{metrics-security-paper}
+Istehad Chowdhury, Brian Chan, and Mohammad Zulkernine.
+\newblock Security metrics for source code structures.
+\newblock In {\em Proceedings of the Fourth International Workshop on Software
+  Engineering for Secure Systems}, SESS '08, pages 57--64, New York, NY, USA,
+  2008. ACM.
+
+\bibitem{parallel-performance-metrics-paper}
+Sartaj Sahni and Venkat Thanvantri.
+\newblock Parallel computing: Performance metrics and models.
+\newblock Technical report, University of Florida, 1995.
+
+\bibitem{patterson-and-hennessy-cod}
+David~A. Patterson and John~L. Hennessy.
+\newblock {\em Computer Organization and Design: The Hardware/Software
+  Interface}.
+\newblock Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 3rd edition,
+  2007.
+
+\bibitem{patterson-and-hennessy-quantitative-approach}
+David~A. Patterson and John~L. Hennessy.
+\newblock {\em Computer Architecture: A Quantitative Approach}.
+\newblock Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 1990.
+
+\bibitem{introduction-to-algorithms-book}
+Thomas~H. Cormen, Charles~E. Leiserson, Ronald~L. Rivest, and Clifford Stein.
+\newblock {\em Introduction to Algorithms, Third Edition}.
+\newblock The MIT Press, 3rd edition, 2009.
+
+\bibitem{intel-multithreading-guide}
+Intel(R).
+\newblock \uppercase{I}ntel \uppercase{G}uide for \uppercase{D}eveloping
+  \uppercase{M}ultithreaded \uppercase{A}pplications.
+\newblock
+  \url{https://software.intel.com/en-us/articles/intel-guide-for-developing-multithreaded-applications}.
+
+\bibitem{llvm-online-docs}
+\textsc{LLVM} \uppercase{o}nline \uppercase{d}ocumentation.
+\newblock \url{http://llvm.org/docs/}.
+
+\bibitem{ppar-tool}
+Aleksandr Maramzin.
+\newblock \uppercase{p}ervasive \uppercase{p}arallelism
+  (\uppercase{p}\uppercase{p}ar) software parallelisability metrics tool
+  implementation.
+\newblock \url{https://github.com/av-maramzin/PParMetrics}.
+\newblock University of Edinburgh, School of Informatics, MSc by Research,
+  2018.
+
+\bibitem{llvm-online-docs-ir}
+\textsc{LLVM} \uppercase{l}anguage \uppercase{r}eference \uppercase{m}anual.
+\newblock \url{http://llvm.org/docs/LangRef.html}.
+
+\bibitem{llvm-online-docs-pass-framework}
+\uppercase{w}riting an \textsc{LLVM} \uppercase{p}ass.
+\newblock \url{http://llvm.org/docs/WritingAnLLVMPass.html}.
+
+\bibitem{graphviz-official-website}
+\uppercase{G}raphviz - \uppercase{G}raph \uppercase{V}isualization
+  \uppercase{S}oftware.
+\newblock \url{https://www.graphviz.org/}.
+
+\bibitem{practical-dep-testing-paper}
+Gina Goff, Ken Kennedy, and Chau-Wen Tseng.
+\newblock Practical dependence testing.
+\newblock In {\em Proceedings of the ACM SIGPLAN 1991 Conference on Programming
+  Language Design and Implementation}, PLDI '91, pages 15--29, New York, NY,
+  USA, 1991. ACM.
+
+\bibitem{muchnick-compilers-book}
+Steven~S. Muchnick.
+\newblock {\em Advanced Compiler Design and Implementation}.
+\newblock Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 1997.
+
+\bibitem{nas-official-website}
+\uppercase{N}\uppercase{A}\uppercase{S}\uppercase{A} \uppercase{P}arallel
+  \uppercase{B}enchmarks.
+\newblock \url{https://www.nas.nasa.gov/publications/npb.html}.
+
+\bibitem{snu-nas-website}
+\uppercase{S}eoul \uppercase{N}ational \uppercase{U}niversity
+  \uppercase{N}\uppercase{A}\uppercase{S} \uppercase{P}arallel
+  \uppercase{B}enchmarks implementation.
+\newblock \url{http://aces.snu.ac.kr/software/snu-npb/}.
+
+\bibitem{source-code-quality-classification-paper}
+Petr Vytovtov and Evgeny Markov.
+\newblock Source code quality classification based on software metrics.
+\newblock In {\em Proceedings of the 20th Conference of Open Innovations
+  Association FRUCT}, FRUCT'20, pages 71:505--71:511, Helsinki, Finland,
+  Finland, 2017. FRUCT Oy.
+
+\bibitem{python-lib-pandas}
+pandas: \uppercase{P}ython \uppercase{D}ata \uppercase{A}nalysis
+  \uppercase{L}ibrary.
+\newblock \url{https://pandas.pydata.org/}.
+
+\bibitem{python-matplotlib}
+scikit-learn: \uppercase{P}ython \uppercase{P}lotting \uppercase{L}ibrary -
+  matplotlib.
+\newblock \url{https://matplotlib.org/}.
+
+\bibitem{python-lib-scikit-learn}
+scikit-learn: \uppercase{M}achine \uppercase{L}earning in \uppercase{P}ython.
+\newblock \url{http://scikit-learn.org/stable/}.
+
+\bibitem{statistical-learning-book}
+Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani.
+\newblock {\em An Introduction to Statistical Learning: With Applications in
+  R}.
+\newblock Springer Publishing Company, Incorporated, 2014.
+
+\end{thebibliography}
